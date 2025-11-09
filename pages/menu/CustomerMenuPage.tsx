@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { firebaseService } from '../../services/firebaseService';
@@ -8,6 +9,7 @@ import Card from '../../components/ui/Card';
 import Modal from '../../components/ui/Modal';
 import { CheckCircleIcon } from '../../components/icons/Icons';
 import { useToast } from '../../hooks/useToast';
+import Spinner from '../../components/ui/Spinner';
 
 const CustomerMenuPage: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -80,7 +82,12 @@ const CustomerMenuPage: React.FC = () => {
         }
     };
 
-    if (loading) return <div className="text-center p-10">Loading Menu...</div>;
+    if (loading) return (
+        <div className="flex justify-center items-center h-screen">
+            <Spinner size="lg" />
+        </div>
+    );
+
     if (!business) return <div className="text-center p-10">Menu not found.</div>;
 
     const CartContent = () => (

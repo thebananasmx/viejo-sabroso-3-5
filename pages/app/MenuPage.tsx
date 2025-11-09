@@ -8,6 +8,7 @@ import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
 import { PlusIcon, EditIcon, TrashIcon } from '../../components/icons/Icons';
 import { useToast } from '../../hooks/useToast';
+import Spinner from '../../components/ui/Spinner';
 
 const resizeImage = (file: File, maxWidth: number, maxHeight: number): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -209,7 +210,11 @@ const MenuPage: React.FC = () => {
         }
     };
 
-    if (loading) return <div>Loading menu...</div>;
+    if (loading) return (
+        <div className="flex justify-center items-center h-96">
+            <Spinner size="lg" />
+        </div>
+    );
 
     return (
         <div>

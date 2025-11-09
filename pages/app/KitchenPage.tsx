@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { firebaseService } from '../../services/firebaseService';
@@ -6,6 +7,7 @@ import { Order, OrderStatus } from '../../types';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import { useToast } from '../../hooks/useToast';
+import Spinner from '../../components/ui/Spinner';
 
 const statusConfig = {
     [OrderStatus.PENDING]: { title: "New Orders", color: "bg-yellow-500", next: OrderStatus.IN_PREPARATION, nextText: "Start Preparing" },
@@ -48,7 +50,11 @@ const KitchenPage: React.FC = () => {
     
     const columns: OrderStatus[] = [OrderStatus.PENDING, OrderStatus.IN_PREPARATION, OrderStatus.READY];
 
-    if (loading) return <div className="text-center p-10">Loading kitchen orders...</div>
+    if (loading) return (
+        <div className="flex justify-center items-center h-full">
+            <Spinner size="lg" />
+        </div>
+    );
 
     return (
         <div className="h-[calc(100vh-4rem)] bg-gray-900 flex flex-col">

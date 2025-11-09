@@ -1,4 +1,5 @@
 
+
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { firebaseService } from '../../services/firebaseService';
@@ -8,6 +9,7 @@ import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import QRCodeGenerator from '../../components/QRCodeGenerator';
 import { useToast } from '../../hooks/useToast';
+import Spinner from '../../components/ui/Spinner';
 
 const SettingsPage: React.FC = () => {
     const { user } = useAuth();
@@ -69,7 +71,11 @@ const SettingsPage: React.FC = () => {
 
 
     if (loading) {
-        return <div>Loading settings...</div>;
+        return (
+            <div className="flex justify-center items-center h-96">
+                <Spinner size="lg" />
+            </div>
+        );
     }
 
     if (!business) {

@@ -4,6 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { firebaseService } from '../../services/firebaseService';
 import { Order, OrderStatus } from '../../types';
 import Card from '../../components/ui/Card';
+import Spinner from '../../components/ui/Spinner';
 
 const DashboardPage: React.FC = () => {
     const { user } = useAuth();
@@ -64,7 +65,11 @@ const DashboardPage: React.FC = () => {
         });
     }
 
-    if (loading) return <div>Loading dashboard...</div>;
+    if (loading) return (
+        <div className="flex justify-center items-center h-96">
+            <Spinner size="lg" />
+        </div>
+    );
 
     return (
         <div>

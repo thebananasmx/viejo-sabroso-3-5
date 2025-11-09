@@ -1,4 +1,5 @@
 
+
 import React, { useContext } from 'react';
 import { createHashRouter, Navigate, Outlet } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
@@ -26,18 +27,26 @@ import SettingsPage from '../pages/app/SettingsPage'; // Import Settings page
 import AdminLoginPage from '../pages/admin/AdminLoginPage';
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
 import NotFoundPage from '../pages/NotFoundPage';
+import Spinner from '../components/ui/Spinner';
 
 const ProtectedRoute: React.FC<{ allowedRoles: UserRole[] }> = ({ allowedRoles }) => {
   const authContext = useContext(AuthContext);
 
   if (authContext === null) {
-    // This should ideally show a loading spinner
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-brand-dark">
+        <Spinner size="lg" />
+      </div>
+    );
   }
   const { user, loading } = authContext;
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-brand-dark">
+        <Spinner size="lg" />
+      </div>
+    );
   }
   
   if (!user) {

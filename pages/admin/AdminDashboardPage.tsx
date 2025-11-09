@@ -1,8 +1,10 @@
 
+
 import React, { useEffect, useState } from 'react';
 import { firebaseService } from '../../services/firebaseService';
 import { Business } from '../../types';
 import Card from '../../components/ui/Card';
+import Spinner from '../../components/ui/Spinner';
 
 interface BusinessWithMetrics extends Business {
   metrics: {
@@ -35,7 +37,11 @@ const AdminDashboardPage: React.FC = () => {
     fetchBusinesses();
   }, []);
 
-  if (loading) return <div className="text-brand-light">Loading businesses...</div>;
+  if (loading) return (
+      <div className="flex justify-center items-center h-96">
+          <Spinner size="lg" />
+      </div>
+  );
 
   return (
     <div>
