@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import firebase from 'firebase/app';
-import 'firebase/auth';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { User } from '../types';
 import { firebaseService } from '../services/firebaseService';
 import { auth } from '../firebaseConfig';
@@ -20,7 +19,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser: firebase.User | null) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
       if (firebaseUser) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User

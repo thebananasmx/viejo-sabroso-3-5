@@ -1,7 +1,7 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/auth';
-import 'firebase/storage';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, Timestamp } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { getStorage } from 'firebase/storage';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -14,11 +14,11 @@ const firebaseConfig = {
   measurementId: "G-KNYVZD3S9Z"
 };
 
-// Initialize Firebase for Singleton pattern
-const app = !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 // Initialize and export Firebase services
-export const db = firebase.firestore();
-export const auth = firebase.auth();
-export const storage = firebase.storage();
-export const Timestamp = firebase.firestore.Timestamp;
+export const db = getFirestore(app);
+export const auth = getAuth(app);
+export const storage = getStorage(app);
+export { Timestamp };

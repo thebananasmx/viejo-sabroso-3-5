@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/ui/Button';
@@ -6,8 +7,8 @@ import { useAuth } from '../../hooks/useAuth';
 import { UserRole } from '../../types';
 
 const AdminLoginPage: React.FC = () => {
-  const [email, setEmail] = useState('admin@viejosabroso.com');
-  const [password, setPassword] = useState('adminpass');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const auth = useAuth();
