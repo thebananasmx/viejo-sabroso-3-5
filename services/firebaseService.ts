@@ -107,6 +107,11 @@ export const firebaseService = {
       }
       return null;
   },
+
+  updateBusinessDetails: async (businessId: string, details: Partial<Business>): Promise<void> => {
+      const businessDocRef = doc(db, 'businesses', businessId);
+      await updateDoc(businessDocRef, details);
+  },
   
   getMenu: async (businessId: string): Promise<{ categories: Category[], items: MenuItem[] }> => {
       const categoriesQuery = query(collection(db, "categories"), where("businessId", "==", businessId));

@@ -16,6 +16,7 @@ export interface Business {
   slug: string;
   ownerId: string; // Firebase Auth UID of the owner
   createdAt: string; // ISO string date
+  logoUrl?: string;
 }
 
 export interface Category {

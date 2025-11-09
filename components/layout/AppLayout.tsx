@@ -1,14 +1,27 @@
 
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { MenuIcon, XIcon, DashboardIcon, MenuBoardIcon, KitchenIcon, LogoutIcon, SettingsIcon } from '../icons/Icons';
+import { firebaseService } from '../../services/firebaseService';
+import { Business } from '../../types';
 
 const AppLayout: React.FC = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const auth = useAuth();
     const navigate = useNavigate();
+    const [business, setBusiness] = useState<Business | null>(null);
+
+    useEffect(() => {
+        const fetchBusiness = async () => {
+            if (auth.user?.businessId) {
+                const biz = await firebaseService.getBusinessById(auth.user.businessId);
+                setBusiness(biz);
+            }
+        };
+        fetchBusiness();
+    }, [auth.user]);
 
     const handleLogout = async () => {
         await auth.logout();
@@ -24,8 +37,12 @@ const AppLayout: React.FC = () => {
     
     const sidebarContent = (
       <div className="flex flex-col h-full">
-        <div className="px-4 py-6">
-          <h1 className="text-2xl font-bold text-brand-light">Viejo Sabroso</h1>
+        <div className="px-4 py-6 flex items-center h-16">
+          {business?.logoUrl ? (
+            <img src={business.logoUrl} alt={business.name} className="h-10 w-auto max-w-full" />
+          ) : (
+            <h1 className="text-2xl font-bold text-brand-light">Viejo Sabroso</h1>
+          )}
         </div>
         <nav className="flex-1 px-2 space-y-1">
           {navItems.map((item) => (
@@ -53,6 +70,9 @@ const AppLayout: React.FC = () => {
               <LogoutIcon className="h-6 w-6" />
               <span className="ml-3">Logout</span>
           </button>
+           <p className="mt-4 text-center text-xs text-gray-500">
+            Powered by Viejo Sabroso
+          </p>
         </div>
       </div>
     );
@@ -84,7 +104,11 @@ const AppLayout: React.FC = () => {
                     </button>
                     <div className="flex-1 px-4 flex justify-between">
                        <div className="flex-1 flex items-center">
-                          <h1 className="text-xl font-bold text-brand-light">Viejo Sabroso</h1>
+                          {business?.logoUrl ? (
+                            <img src={business.logoUrl} alt={business.name} className="h-8 w-auto" />
+                          ) : (
+                            <h1 className="text-xl font-bold text-brand-light">Viejo Sabroso</h1>
+                          )}
                        </div>
                     </div>
                 </div>
