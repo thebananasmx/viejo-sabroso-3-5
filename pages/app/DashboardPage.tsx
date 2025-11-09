@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useAuth } from '../../hooks/useAuth';
@@ -35,12 +34,35 @@ const DashboardPage: React.FC = () => {
     const totalOrders = orders.length;
     const pendingOrders = orders.filter(o => o.status === OrderStatus.PENDING).length;
 
-    const salesData = [
-      { name: 'Today', sales: totalRevenue },
-      // In a real app, you would fetch historical data.
-      { name: 'Yesterday', sales: 0 },
-      { name: '2 days ago', sales: 0 },
-    ];
+    // Process orders to generate dynamic sales data for the last 7 days
+    const salesByDay = completedOrders.reduce((acc, order) => {
+        const orderDate = new Date(order.createdAt);
+        const day = orderDate.toISOString().split('T')[0]; // Use YYYY-MM-DD as key
+        acc[day] = (acc[day] || 0) + order.total;
+        return acc;
+    }, {} as Record<string, number>);
+
+    const salesData = [];
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        const dayKey = date.toISOString().split('T')[0];
+
+        let name = '';
+        if (i === 0) {
+            name = 'Today';
+        } else if (i === 1) {
+            name = 'Yesterday';
+        } else {
+            name = date.toLocaleDateString('en-US', { weekday: 'short' });
+        }
+
+        salesData.push({
+            name,
+            sales: salesByDay[dayKey] || 0,
+        });
+    }
 
     if (loading) return <div>Loading dashboard...</div>;
 
