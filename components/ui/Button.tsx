@@ -13,19 +13,19 @@ const Button: React.FC<ButtonProps> = ({
   className = '', 
   ...props 
 }) => {
-  const baseStyles = 'font-bold rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'font-bold rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-brand-dark transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variantStyles = {
-    primary: 'bg-primary-600 hover:bg-primary-700 text-white focus:ring-primary-500',
-    secondary: 'bg-secondary hover:bg-secondary/90 text-white focus:ring-secondary',
+    primary: 'bg-brand-primary text-brand-dark hover:bg-opacity-90 focus:ring-brand-primary',
+    secondary: 'bg-transparent border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-brand-dark focus:ring-brand-primary',
     danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500',
-    ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 border border-gray-300 focus:ring-primary-500',
+    ghost: 'bg-transparent hover:bg-brand-dark-accent text-brand-light border border-gray-700 focus:ring-gray-500',
   };
 
   const sizeStyles = {
-    sm: 'py-1.5 px-3 text-sm',
-    md: 'py-2 px-4 text-base',
-    lg: 'py-3 px-6 text-lg',
+    sm: 'py-1.5 px-4 text-sm',
+    md: 'py-2.5 px-6 text-base',
+    lg: 'py-3 px-8 text-lg',
   };
 
   const classes = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`;

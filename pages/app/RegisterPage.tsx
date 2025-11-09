@@ -6,28 +6,29 @@ import Input from '../../components/ui/Input';
 import { useAuth } from '../../hooks/useAuth';
 import QRCodeGenerator from '../../components/QRCodeGenerator';
 import { CheckCircleIcon } from '../../components/icons/Icons';
+import { useToast } from '../../hooks/useToast';
 
 const RegisterPage: React.FC = () => {
   const [step, setStep] = useState(1);
   const [businessName, setBusinessName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [registeredSlug, setRegisteredSlug] = useState('');
   const auth = useAuth();
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
     try {
       await auth.register(businessName, email, password);
       setRegisteredSlug(businessName.toLowerCase().replace(/\s+/g, '-'));
       setStep(2);
+      addToast('Registration successful!', 'success');
     } catch (err: any) {
-      setError(err.message || 'Failed to register.');
+      addToast(err.message || 'Failed to register.', 'error');
     } finally {
       setLoading(false);
     }
@@ -35,12 +36,12 @@ const RegisterPage: React.FC = () => {
 
   if (step === 2) {
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 text-center">
+                <div className="bg-brand-dark-accent py-8 px-4 shadow-xl sm:rounded-lg sm:px-10 text-center border border-gray-800">
                     <CheckCircleIcon className="mx-auto h-12 w-12 text-green-500"/>
-                    <h2 className="mt-4 text-2xl font-bold text-gray-900">Registration Successful!</h2>
-                    <p className="mt-2 text-gray-600">Your business is ready. Here is your unique QR code.</p>
+                    <h2 className="mt-4 text-2xl font-bold text-brand-light">Registration Successful!</h2>
+                    <p className="mt-2 text-gray-400">Your business is ready. Here is your unique QR code.</p>
                     <div className="mt-8">
                         <QRCodeGenerator slug={registeredSlug} />
                     </div>
@@ -54,21 +55,21 @@ const RegisterPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-light">
           Create your business account
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-gray-400">
           Already have an account?{' '}
-          <Link to="/app/login" className="font-medium text-primary-600 hover:text-primary-500">
+          <Link to="/app/login" className="font-medium text-brand-primary hover:opacity-80">
             Sign in
           </Link>
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-brand-dark-accent py-8 px-4 shadow-xl sm:rounded-lg sm:px-10 border border-gray-800">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <Input
               id="businessName"
@@ -96,7 +97,7 @@ const RegisterPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            
             <div>
               <Button type="submit" className="w-full flex justify-center" disabled={loading}>
                 {loading ? 'Creating account...' : 'Create Account'}

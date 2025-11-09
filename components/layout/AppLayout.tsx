@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -22,7 +23,7 @@ const AppLayout: React.FC = () => {
     const sidebarContent = (
       <div className="flex flex-col h-full">
         <div className="px-4 py-6">
-          <h1 className="text-2xl font-bold text-white">Viejo Sabroso</h1>
+          <h1 className="text-2xl font-bold text-brand-light">Viejo Sabroso</h1>
         </div>
         <nav className="flex-1 px-2 space-y-1">
           {navItems.map((item) => (
@@ -32,8 +33,8 @@ const AppLayout: React.FC = () => {
               className={({ isActive }) =>
                 `flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
                   isActive
-                    ? 'bg-primary-700 text-white'
-                    : 'text-gray-300 hover:bg-secondary/75 hover:text-white'
+                    ? 'bg-brand-primary/10 text-brand-primary'
+                    : 'text-gray-300 hover:bg-brand-dark-accent hover:text-white'
                 }`
               }
             >
@@ -42,10 +43,10 @@ const AppLayout: React.FC = () => {
             </NavLink>
           ))}
         </nav>
-        <div className="px-2 py-4">
+        <div className="px-2 py-4 border-t border-gray-800">
           <button
               onClick={handleLogout}
-              className="flex items-center w-full px-2 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-secondary/75 hover:text-white"
+              className="flex items-center w-full px-2 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-brand-dark-accent hover:text-white"
           >
               <LogoutIcon className="h-6 w-6" />
               <span className="ml-3">Logout</span>
@@ -55,11 +56,11 @@ const AppLayout: React.FC = () => {
     );
 
     return (
-        <div className="flex h-screen bg-gray-100">
+        <div className="flex h-screen bg-gray-900">
             {/* Mobile sidebar */}
             <div className={`fixed inset-0 flex z-40 md:hidden ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out`}>
                 <div className="fixed inset-0 bg-black/60" onClick={() => setSidebarOpen(false)}></div>
-                <div className="relative flex-1 flex flex-col max-w-xs w-full bg-secondary">
+                <div className="relative flex-1 flex flex-col max-w-xs w-full bg-brand-dark border-r border-gray-800">
                     {sidebarContent}
                 </div>
             </div>
@@ -67,28 +68,28 @@ const AppLayout: React.FC = () => {
             {/* Desktop sidebar */}
             <div className="hidden md:flex md:w-64 md:flex-shrink-0">
                 <div className="flex flex-col w-64">
-                   <div className="flex flex-col h-0 flex-1 bg-secondary">{sidebarContent}</div>
+                   <div className="flex flex-col h-0 flex-1 bg-brand-dark border-r border-gray-800">{sidebarContent}</div>
                 </div>
             </div>
 
             <div className="flex flex-col w-0 flex-1 overflow-hidden">
-                <div className="relative z-10 flex-shrink-0 flex h-16 bg-white shadow md:hidden">
+                <div className="relative z-10 flex-shrink-0 flex h-16 bg-brand-dark shadow-md md:hidden border-b border-gray-800">
                     <button
                         onClick={() => setSidebarOpen(true)}
-                        className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+                        className="px-4 border-r border-gray-800 text-gray-400 focus:outline-none"
                     >
                         <MenuIcon className="h-6 w-6" />
                     </button>
                     <div className="flex-1 px-4 flex justify-between">
                        <div className="flex-1 flex items-center">
-                          <h1 className="text-xl font-bold text-primary-600">Viejo Sabroso</h1>
+                          <h1 className="text-xl font-bold text-brand-light">Viejo Sabroso</h1>
                        </div>
                     </div>
                 </div>
 
                 <main className="flex-1 relative overflow-y-auto focus:outline-none">
                     <div className="py-6">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 text-brand-light">
                             <Outlet />
                         </div>
                     </div>

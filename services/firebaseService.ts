@@ -140,6 +140,36 @@ export const firebaseService = {
       return deleteDoc(docRef);
   },
 
+  addCategory: async (category: Omit<Category, 'id'>): Promise<Category> => {
+      const docRef = await addDoc(collection(db, "categories"), category);
+      return { ...category, id: docRef.id };
+  },
+
+  updateCategory: async (category: Category): Promise<Category> => {
+      const { id, ...categoryData } = category;
+      const docRef = doc(db, "categories", id);
+      await updateDoc(docRef, { ...categoryData });
+      return category;
+  },
+
+  deleteCategory: async (categoryId: string): Promise<void> => {
+      const batch = writeBatch(db);
+
+      // 1. Delete the category itself
+      const categoryRef = doc(db, "categories", categoryId);
+      batch.delete(categoryRef);
+
+      // 2. Find and delete all menu items in that category
+      const itemsQuery = query(collection(db, "menuItems"), where("categoryId", "==", categoryId));
+      const itemsSnapshot = await getDocs(itemsQuery);
+      itemsSnapshot.forEach(document => {
+          batch.delete(document.ref);
+      });
+
+      // 3. Commit the batch
+      await batch.commit();
+  },
+
   // Orders
   onOrdersUpdate: (businessId: string, callback: (orders: Order[]) => void): () => void => {
     const q = query(collection(db, "orders"), 

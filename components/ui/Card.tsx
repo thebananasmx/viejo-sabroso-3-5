@@ -8,7 +8,7 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ children, className = '', onClick }) => {
-  const cardClasses = `bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 ${onClick ? 'cursor-pointer hover:shadow-xl hover:-translate-y-1' : ''} ${className}`;
+  const cardClasses = `bg-brand-dark-accent rounded-xl shadow-lg overflow-hidden transition-all duration-300 border border-transparent ${onClick ? 'cursor-pointer hover:border-gray-700' : ''} ${className}`;
   
   return (
     <div className={cardClasses} onClick={onClick}>

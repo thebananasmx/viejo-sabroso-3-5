@@ -7,6 +7,7 @@ import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import Modal from '../../components/ui/Modal';
 import { CheckCircleIcon } from '../../components/icons/Icons';
+import { useToast } from '../../hooks/useToast';
 
 const CustomerMenuPage: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -18,6 +19,8 @@ const CustomerMenuPage: React.FC = () => {
     const [tableNumber, setTableNumber] = useState('');
     const [isOrderPlaced, setIsOrderPlaced] = useState(false);
     const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+    const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+    const { addToast } = useToast();
 
     useEffect(() => {
         const fetchBusinessAndMenu = async () => {
@@ -32,6 +35,7 @@ const CustomerMenuPage: React.FC = () => {
                 }
             } catch (error) {
                 console.error("Failed to fetch menu", error);
+                addToast('Failed to load menu.', 'error');
             } finally {
                 setLoading(false);
             }
@@ -49,6 +53,7 @@ const CustomerMenuPage: React.FC = () => {
             }
             return [...prevCart, { menuItemId: item.id, name: item.name, quantity: 1, price: item.price }];
         });
+        addToast(`${item.name} added to cart!`, 'success');
     };
 
     const cartTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -66,9 +71,10 @@ const CustomerMenuPage: React.FC = () => {
             setCart([]);
             setTableNumber('');
             setIsOrderPlaced(true);
+            setIsCartModalOpen(false);
         } catch(error) {
             console.error("Failed to place order", error);
-            alert("There was an error placing your order. Please try again.");
+            addToast("There was an error placing your order. Please try again.", 'error');
         } finally {
             setIsPlacingOrder(false);
         }
@@ -77,25 +83,66 @@ const CustomerMenuPage: React.FC = () => {
     if (loading) return <div className="text-center p-10">Loading Menu...</div>;
     if (!business) return <div className="text-center p-10">Menu not found.</div>;
 
+    const CartContent = () => (
+        <>
+            {cart.length === 0 ? (
+                <p className="text-gray-400">Your cart is empty.</p>
+            ) : (
+                <>
+                    <div className="space-y-2 mb-4 max-h-64 overflow-y-auto">
+                        {cart.map(item => (
+                            <div key={item.menuItemId} className="flex justify-between items-center text-sm">
+                                <span className="font-medium text-brand-light">{item.quantity}x {item.name}</span>
+                                <span className="text-gray-300">${(item.quantity * item.price).toFixed(2)}</span>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="border-t border-gray-700 pt-4 flex justify-between font-bold text-lg text-brand-light">
+                        <span>Total</span>
+                        <span>${cartTotal.toFixed(2)}</span>
+                    </div>
+                    <div className="mt-4">
+                        <input
+                            type="number"
+                            placeholder="Your Table Number"
+                            value={tableNumber}
+                            onChange={e => setTableNumber(e.target.value)}
+                            className="w-full px-4 py-2.5 bg-brand-dark-accent border border-gray-700 rounded-lg shadow-sm text-brand-light placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent sm:text-sm"
+                        />
+                    </div>
+                    <Button 
+                        className="w-full mt-4" 
+                        onClick={handlePlaceOrder}
+                        disabled={!tableNumber || cart.length === 0 || isPlacingOrder}
+                    >
+                        {isPlacingOrder ? 'Placing Order...' : 'Place Order'}
+                    </Button>
+                </>
+            )}
+        </>
+    );
+
+    const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+
     return (
-        <div className="container mx-auto p-4 md:p-8">
-            <h1 className="text-4xl font-bold text-center mb-2">{business.name}</h1>
-            <p className="text-lg text-gray-600 text-center mb-8">Welcome! Order from your table.</p>
+        <div className="container mx-auto p-4 md:p-8 pb-32 md:pb-8">
+            <h1 className="font-serif text-4xl font-bold text-center mb-2 text-brand-light">{business.name}</h1>
+            <p className="text-lg text-gray-400 text-center mb-8">Welcome! Order from your table.</p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2">
                     {categories.map(category => (
                         <div key={category.id} className="mb-8">
-                            <h2 className="text-2xl font-semibold text-gray-800 mb-4">{category.name}</h2>
+                            <h2 className="font-serif text-3xl font-semibold text-brand-light mb-4">{category.name}</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 {items.filter(item => item.categoryId === category.id).map(item => (
                                     <Card key={item.id} className="flex flex-col">
                                         <img src={item.imageUrl} alt={item.name} className="w-full h-40 object-cover"/>
                                         <div className="p-4 flex flex-col flex-grow">
-                                            <h3 className="text-lg font-bold">{item.name}</h3>
-                                            <p className="text-gray-600 text-sm mt-1 flex-grow">{item.description}</p>
+                                            <h3 className="text-lg font-bold text-brand-light">{item.name}</h3>
+                                            <p className="text-gray-400 text-sm mt-1 flex-grow">{item.description}</p>
                                             <div className="flex justify-between items-center mt-4">
-                                                <p className="text-primary-600 font-bold text-lg">${item.price.toFixed(2)}</p>
+                                                <p className="text-brand-primary font-bold text-lg">${item.price.toFixed(2)}</p>
                                                 <Button size="sm" onClick={() => addToCart(item)}>Add</Button>
                                             </div>
                                         </div>
@@ -107,52 +154,35 @@ const CustomerMenuPage: React.FC = () => {
                 </div>
 
                 <div className="md:col-span-1">
-                    <div className="sticky top-24">
+                    <div className="hidden md:block sticky top-24">
                         <Card className="p-6">
-                            <h2 className="text-xl font-bold mb-4">Your Order</h2>
-                            {cart.length === 0 ? (
-                                <p className="text-gray-500">Your cart is empty.</p>
-                            ) : (
-                                <>
-                                    <div className="space-y-2 mb-4">
-                                        {cart.map(item => (
-                                            <div key={item.menuItemId} className="flex justify-between items-center text-sm">
-                                                <span className="font-medium">{item.quantity}x {item.name}</span>
-                                                <span>${(item.quantity * item.price).toFixed(2)}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <div className="border-t pt-4 flex justify-between font-bold text-lg">
-                                        <span>Total</span>
-                                        <span>${cartTotal.toFixed(2)}</span>
-                                    </div>
-                                    <div className="mt-4">
-                                        <input
-                                            type="number"
-                                            placeholder="Your Table Number"
-                                            value={tableNumber}
-                                            onChange={e => setTableNumber(e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                                        />
-                                    </div>
-                                    <Button 
-                                        className="w-full mt-4" 
-                                        onClick={handlePlaceOrder}
-                                        disabled={!tableNumber || cart.length === 0 || isPlacingOrder}
-                                    >
-                                        {isPlacingOrder ? 'Placing Order...' : 'Place Order'}
-                                    </Button>
-                                </>
-                            )}
+                             <h2 className="text-xl font-bold mb-4 text-brand-light">Your Order</h2>
+                            <CartContent />
                         </Card>
                     </div>
                 </div>
             </div>
             
+            {cart.length > 0 && (
+                <div className="md:hidden fixed bottom-0 left-0 right-0 p-4 bg-brand-dark/90 backdrop-blur-sm z-20 border-t border-gray-800">
+                     <Button className="w-full shadow-lg" size="lg" onClick={() => setIsCartModalOpen(true)}>
+                        <div className="flex justify-between items-center w-full px-2">
+                            <span className="bg-brand-primary text-brand-dark font-bold rounded-full h-7 w-7 flex items-center justify-center text-sm">{cartItemCount}</span>
+                            <span className="font-bold text-base text-brand-dark">View Order</span>
+                            <span className="font-semibold text-base text-brand-dark">${cartTotal.toFixed(2)}</span>
+                        </div>
+                     </Button>
+                </div>
+            )}
+
+            <Modal isOpen={isCartModalOpen} onClose={() => setIsCartModalOpen(false)} title="Your Order">
+                <CartContent />
+            </Modal>
+            
             <Modal isOpen={isOrderPlaced} onClose={() => setIsOrderPlaced(false)} title="Order Placed!">
                 <div className="text-center">
                     <CheckCircleIcon className="mx-auto h-16 w-16 text-green-500 mb-4"/>
-                    <p className="text-lg text-gray-700">
+                    <p className="text-lg text-gray-300">
                         Your order has been sent to the kitchen. It will be with you shortly!
                     </p>
                     <Button className="mt-6" onClick={() => setIsOrderPlaced(false)}>Close</Button>

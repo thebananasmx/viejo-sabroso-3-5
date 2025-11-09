@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { firebaseService } from '../../services/firebaseService';
 import { Business } from '../../types';
@@ -34,31 +35,31 @@ const AdminDashboardPage: React.FC = () => {
     fetchBusinesses();
   }, []);
 
-  if (loading) return <div>Loading businesses...</div>;
+  if (loading) return <div className="text-brand-light">Loading businesses...</div>;
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Registered Businesses</h1>
+      <h1 className="text-3xl font-bold text-brand-light mb-6">Registered Businesses</h1>
       <Card>
         <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-700">
+            <thead className="bg-brand-dark-accent/50">
                 <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Business Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Slug</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registered On</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Orders</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Revenue</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Business Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Slug</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Registered On</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Total Orders</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Total Revenue</th>
                 </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-brand-dark-accent divide-y divide-gray-700">
                 {businesses.map((biz) => (
                 <tr key={biz.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{biz.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{biz.slug}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(biz.createdAt).toLocaleDateString()}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{biz.metrics.totalOrders}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${biz.metrics.totalRevenue.toFixed(2)}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-brand-light">{biz.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{biz.slug}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{new Date(biz.createdAt).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{biz.metrics.totalOrders}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">${biz.metrics.totalRevenue.toFixed(2)}</td>
                 </tr>
                 ))}
             </tbody>
