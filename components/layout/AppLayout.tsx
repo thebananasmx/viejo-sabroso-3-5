@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -56,7 +57,7 @@ const AppLayout: React.FC = () => {
     );
 
     return (
-        <div className="flex h-screen bg-gray-900">
+        <div className="flex h-screen bg-brand-dark">
             {/* Mobile sidebar */}
             <div className={`fixed inset-0 flex z-40 md:hidden ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out`}>
                 <div className="fixed inset-0 bg-black/60" onClick={() => setSidebarOpen(false)}></div>
@@ -72,7 +73,7 @@ const AppLayout: React.FC = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col w-0 flex-1 overflow-hidden">
+            <div className="flex flex-col w-0 flex-1 overflow-hidden bg-brand-dark-accent">
                 <div className="relative z-10 flex-shrink-0 flex h-16 bg-brand-dark shadow-md md:hidden border-b border-gray-800">
                     <button
                         onClick={() => setSidebarOpen(true)}
