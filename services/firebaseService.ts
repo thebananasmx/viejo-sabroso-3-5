@@ -174,21 +174,29 @@ export const firebaseService = {
 
   // Orders
   onOrdersUpdate: (businessId: string, callback: (orders: Order[]) => void): () => void => {
-    // FIX: Removed orderBy from the query to prevent needing a composite index.
-    // Sorting and filtering are now both handled client-side for maximum reliability.
-    const q = query(collection(db, "orders"), where("businessId", "==", businessId));
+    // This query is more efficient as it filters on the server.
+    // NOTE: This may require a composite index in Firestore. If orders are not appearing,
+    // check the browser's developer console for a Firestore error message with a link to create the required index.
+    const q = query(
+        collection(db, "orders"), 
+        where("businessId", "==", businessId),
+        where("status", "in", [OrderStatus.PENDING, OrderStatus.IN_PREPARATION, OrderStatus.READY])
+    );
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        if ('docs' in querySnapshot) {
-            const activeStatuses = [OrderStatus.PENDING, OrderStatus.IN_PREPARATION, OrderStatus.READY];
+    const unsubscribe = onSnapshot(q, 
+        (querySnapshot) => {
+            // No need to filter by status client-side anymore.
             const orders = querySnapshot.docs
                 .map(doc => ({ id: doc.id, ...convertDocTimestamps(doc.data()) } as Order))
-                .filter(order => activeStatuses.includes(order.status))
-                .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+                .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()); // oldest first
             
             callback(orders);
+        },
+        (error) => {
+            // Log any errors from Firestore, which is helpful for debugging index issues.
+            console.error("Error listening to kitchen orders: ", error);
         }
-    });
+    );
 
     return unsubscribe;
   },
