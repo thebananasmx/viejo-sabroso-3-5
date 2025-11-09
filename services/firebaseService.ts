@@ -1,16 +1,14 @@
-
 import firebase from 'firebase/app';
-import 'firebase/auth';
 import 'firebase/firestore';
-import 'firebase/storage';
-import { db, auth, storage } from '../firebaseConfig';
+
+import { db, auth, storage, Timestamp } from '../firebaseConfig';
 import { Order, OrderStatus, Business, Category, MenuItem, User, UserRole } from '../types';
 
 // Helper to convert Firestore Timestamps to serializable strings (ISO)
 const convertDocTimestamps = (documentData: any) => {
     const data = { ...documentData };
     for (const key in data) {
-        if (data[key] instanceof firebase.firestore.Timestamp) {
+        if (data[key] instanceof Timestamp) {
             data[key] = data[key].toDate().toISOString();
         }
     }
@@ -123,7 +121,7 @@ export const firebaseService = {
   updateMenuItem: async (item: MenuItem): Promise<MenuItem> => {
       const { id, ...itemData } = item;
       const docRef = db.collection("menuItems").doc(id);
-      await docRef.update(itemData);
+      await docRef.update({ ...itemData });
       return item;
   },
 
@@ -134,10 +132,9 @@ export const firebaseService = {
 
   // Orders
   onOrdersUpdate: (businessId: string, callback: (orders: Order[]) => void): () => void => {
-    const q = db.collection("orders")
-      .where("businessId", "==", businessId)
-      .where("status", "in", [OrderStatus.PENDING, OrderStatus.IN_PREPARATION, OrderStatus.READY])
-      .orderBy("createdAt", "asc");
+    const q = db.collection("orders").where("businessId", "==", businessId)
+        .where("status", "in", [OrderStatus.PENDING, OrderStatus.IN_PREPARATION, OrderStatus.READY])
+        .orderBy("createdAt", "asc");
 
     const unsubscribe = q.onSnapshot((querySnapshot) => {
         const orders = querySnapshot.docs.map(doc => {
@@ -178,7 +175,9 @@ export const firebaseService = {
   },
 
   getBusinessMetrics: async (businessId: string): Promise<{totalOrders: number, totalRevenue: number}> => {
-      const q = db.collection("orders").where("businessId", "==", businessId).where("status", "==", OrderStatus.COMPLETED);
+      const q = db.collection("orders")
+          .where("businessId", "==", businessId)
+          .where("status", "==", OrderStatus.COMPLETED);
       const snapshot = await q.get();
       const orders = snapshot.docs.map(d => d.data() as Order);
       const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
