@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Viejo Sabroso - QR Menu & Ordering System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                DEFAULT: '#F97316',
+                '50': '#FFF7ED',
+                '100': '#FFEDD5',
+                '200': '#FED7AA',
+                '300': '#FDBA74',
+                '400': '#FB923C',
+                '500': '#F97316',
+                '600': '#EA580C',
+                '700': '#C2410C',
+                '800': '#9A3412',
+                '900': '#7C2D12',
+                '950': '#431407',
+              },
+              secondary: '#1E293B',
+              light: '#F8FAFC',
+              dark: '#0F172A',
+            },
+          },
+        },
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "recharts": "https://aistudiocdn.com/recharts@^3.3.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^6.24.0",
+    "qrcode": "https://aistudiocdn.com/qrcode@^1.5.4"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

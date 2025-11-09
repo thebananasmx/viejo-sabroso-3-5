@@ -1,0 +1,5 @@
+{
+  "name": "Viejo Sabroso 3.5",
+  "description": "A comprehensive QR code-based menu and ordering system for restaurants. Businesses can register, create dynamic menus, and manage incoming orders in real-time through a dedicated kitchen interface. Customers can easily scan a QR code to view the menu and place orders directly from their table. Includes a super-admin panel for monitoring registered businesses.",
+  "requestFramePermissions": []
+}
