@@ -5,9 +5,8 @@ import {
 import { 
     signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut 
 } from 'firebase/auth';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-import { db, auth, storage, Timestamp } from '../firebaseConfig';
+import { db, auth, Timestamp } from '../firebaseConfig';
 import { Order, OrderStatus, Business, Category, MenuItem, User, UserRole } from '../types';
 
 // Helper to convert Firestore Timestamps to serializable strings (ISO)
@@ -89,14 +88,6 @@ export const firebaseService = {
       return null;
   },
   
-  // Image Upload
-  uploadImage: async (file: File, path: string): Promise<string> => {
-      const storageRef = ref(storage, path);
-      const snapshot = await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(snapshot.ref);
-      return downloadURL;
-  },
-
   // Business Data
   getBusinessBySlug: async (slug: string): Promise<Business | null> => {
       const q = query(collection(db, "businesses"), where("slug", "==", slug), limit(1));

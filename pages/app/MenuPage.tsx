@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { firebaseService } from '../../services/firebaseService';
@@ -9,6 +8,47 @@ import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
 import { PlusIcon, EditIcon, TrashIcon } from '../../components/icons/Icons';
 import { useToast } from '../../hooks/useToast';
+
+const resizeImage = (file: File, maxWidth: number, maxHeight: number): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target?.result as string;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let { width, height } = img;
+
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    return reject(new Error('Could not get canvas context'));
+                }
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                resolve(canvas.toDataURL('image/jpeg', 0.8)); // Adjust quality as needed
+            };
+            img.onerror = (error) => reject(error);
+        };
+        reader.onerror = (error) => reject(error);
+    });
+};
+
 
 const MenuPage: React.FC = () => {
     const { user } = useAuth();
@@ -85,8 +125,7 @@ const MenuPage: React.FC = () => {
         try {
             let imageUrl = currentItem.imageUrl || '';
             if (imageFile) {
-                const imagePath = `menuItems/${user.businessId}/${Date.now()}_${imageFile.name}`;
-                imageUrl = await firebaseService.uploadImage(imageFile, imagePath);
+                imageUrl = await resizeImage(imageFile, 800, 600);
             }
 
             const itemToSave = { 
