@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { MenuIcon, XIcon, DashboardIcon, MenuBoardIcon, KitchenIcon, LogoutIcon } from '../icons/Icons';
+import { MenuIcon, XIcon, DashboardIcon, MenuBoardIcon, KitchenIcon, LogoutIcon, SettingsIcon } from '../icons/Icons';
 
 const AppLayout: React.FC = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -19,6 +19,7 @@ const AppLayout: React.FC = () => {
         { name: 'Dashboard', to: '/app/dashboard', icon: <DashboardIcon className="h-6 w-6" /> },
         { name: 'Menu', to: '/app/menu', icon: <MenuBoardIcon className="h-6 w-6" /> },
         { name: 'Kitchen', to: '/app/kitchen', icon: <KitchenIcon className="h-6 w-6" /> },
+        { name: 'Settings', to: '/app/settings', icon: <SettingsIcon className="h-6 w-6" /> },
     ];
     
     const sidebarContent = (

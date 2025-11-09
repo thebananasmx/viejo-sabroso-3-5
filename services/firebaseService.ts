@@ -1,3 +1,4 @@
+
 import { 
     collection, getDocs, doc, getDoc, query, where, limit, writeBatch, 
     addDoc, updateDoc, deleteDoc, onSnapshot, orderBy, serverTimestamp 
@@ -95,6 +96,15 @@ export const firebaseService = {
       if (snapshot.empty) return null;
       const docData = snapshot.docs[0].data();
       return { id: snapshot.docs[0].id, ...convertDocTimestamps(docData) } as Business;
+  },
+  
+  getBusinessById: async (id: string): Promise<Business | null> => {
+      const businessDocRef = doc(db, 'businesses', id);
+      const businessDoc = await getDoc(businessDocRef);
+      if (businessDoc.exists()) {
+          return { id, ...convertDocTimestamps(businessDoc.data()) } as Business;
+      }
+      return null;
   },
   
   getMenu: async (businessId: string): Promise<{ categories: Category[], items: MenuItem[] }> => {

@@ -20,6 +20,7 @@ import RegisterPage from '../pages/app/RegisterPage';
 import DashboardPage from '../pages/app/DashboardPage';
 import MenuPage from '../pages/app/MenuPage';
 import KitchenPage from '../pages/app/KitchenPage';
+import SettingsPage from '../pages/app/SettingsPage'; // Import Settings page
 
 // Admin Pages
 import AdminLoginPage from '../pages/admin/AdminLoginPage';
@@ -78,6 +79,7 @@ const router = createHashRouter([
               { path: 'dashboard', element: <DashboardPage /> },
               { path: 'menu', element: <MenuPage /> },
               { path: 'kitchen', element: <KitchenPage /> },
+              { path: 'settings', element: <SettingsPage /> }, // Add Settings route
             ],
           },
         ],
