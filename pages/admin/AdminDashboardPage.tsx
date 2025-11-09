@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { firebaseService } from '../../services/firebaseService';
 import { Business } from '../../types';

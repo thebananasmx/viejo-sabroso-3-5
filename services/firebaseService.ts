@@ -1,136 +1,187 @@
+
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/firestore';
+import 'firebase/storage';
+import { db, auth, storage } from '../firebaseConfig';
 import { Order, OrderStatus, Business, Category, MenuItem, User, UserRole } from '../types';
 
-// --- MOCK DATABASE ---
-let mockUsers: User[] = [
-    { id: 'admin1', email: 'admin@viejosabroso.com', role: UserRole.ADMIN },
-    { id: 'biz1', email: 'burger-palace@test.com', role: UserRole.BUSINESS, businessId: 'b1' },
-];
+// Helper to convert Firestore Timestamps to serializable strings (ISO)
+const convertDocTimestamps = (documentData: any) => {
+    const data = { ...documentData };
+    for (const key in data) {
+        if (data[key] instanceof firebase.firestore.Timestamp) {
+            data[key] = data[key].toDate().toISOString();
+        }
+    }
+    return data;
+}
 
-let mockBusinesses: Business[] = [
-    { id: 'b1', name: 'Burger Palace', slug: 'burger-palace', ownerId: 'biz1', createdAt: new Date() },
-];
-
-let mockCategories: Category[] = [
-    { id: 'c1', name: 'Burgers', businessId: 'b1' },
-    { id: 'c2', name: 'Sides', businessId: 'b1' },
-    { id: 'c3', name: 'Drinks', businessId: 'b1' },
-];
-
-let mockMenuItems: MenuItem[] = [
-    { id: 'm1', name: 'Classic Burger', description: 'A juicy beef patty with lettuce, tomato, and our special sauce.', price: 12.99, imageUrl: 'https://picsum.photos/400/300?random=1', categoryId: 'c1', businessId: 'b1' },
-    { id: 'm2', name: 'Cheese Burger', description: 'Our classic burger with a slice of sharp cheddar cheese.', price: 13.99, imageUrl: 'https://picsum.photos/400/300?random=2', categoryId: 'c1', businessId: 'b1' },
-    { id: 'm3', name: 'French Fries', description: 'Crispy golden french fries, lightly salted.', price: 4.99, imageUrl: 'https://picsum.photos/400/300?random=3', categoryId: 'c2', businessId: 'b1' },
-    { id: 'm4', name: 'Cola', description: 'A refreshing can of cola.', price: 2.50, imageUrl: 'https://picsum.photos/400/300?random=4', categoryId: 'c3', businessId: 'b1' },
-];
-
-let mockOrders: Order[] = [
-    { id: 'o1', businessId: 'b1', tableNumber: 5, items: [{ menuItemId: 'm1', name: 'Classic Burger', quantity: 2, price: 12.99 }], total: 25.98, status: OrderStatus.PENDING, createdAt: new Date(Date.now() - 5 * 60000) },
-    { id: 'o2', businessId: 'b1', tableNumber: 2, items: [{ menuItemId: 'm2', name: 'Cheese Burger', quantity: 1, price: 13.99 }, { menuItemId: 'm3', name: 'French Fries', quantity: 1, price: 4.99 }], total: 18.98, status: OrderStatus.IN_PREPARATION, createdAt: new Date(Date.now() - 3 * 60000) },
-    { id: 'o3', businessId: 'b1', tableNumber: 8, items: [{ menuItemId: 'm4', name: 'Cola', quantity: 4, price: 2.50 }], total: 10.00, status: OrderStatus.READY, createdAt: new Date(Date.now() - 1 * 60000) },
-];
-// --- END MOCK DATABASE ---
-
-const mockApi = <T,>(data: T, delay = 500): Promise<T> => 
-  new Promise(resolve => setTimeout(() => resolve(JSON.parse(JSON.stringify(data))), delay));
-
-const mockApiError = (message: string, delay = 500): Promise<any> =>
-  new Promise((_, reject) => setTimeout(() => reject(new Error(message)), delay));
-
-// --- MOCK SERVICES ---
 export const firebaseService = {
   // Auth
-  login: (email: string, pass: string): Promise<User> => {
-    console.log(`Attempting login for ${email}`);
-    const user = mockUsers.find(u => u.email === email);
-    if (user) {
-        return mockApi(user);
+  login: async (email: string, pass: string): Promise<User> => {
+    const userCredential = await auth.signInWithEmailAndPassword(email, pass);
+    const userDocRef = db.collection('users').doc(userCredential.user!.uid);
+    const userDoc = await userDocRef.get();
+
+    if (!userDoc.exists) {
+      throw new Error("User data not found in Firestore.");
     }
-    return mockApiError('User not found or password incorrect');
+    return { id: userDoc.id, ...userDoc.data() } as User;
   },
-  registerBusiness: (businessName: string, email: string, pass: string): Promise<{user: User, business: Business}> => {
+
+  registerBusiness: async (businessName: string, email: string, pass: string): Promise<{user: User, business: Business}> => {
       const slug = businessName.toLowerCase().replace(/\s+/g, '-');
-      if (mockBusinesses.some(b => b.slug === slug)) {
-          return mockApiError('Business name already taken.');
+      
+      const businessesRef = db.collection("businesses");
+      const q = businessesRef.where("slug", "==", slug).limit(1);
+      const querySnapshot = await q.get();
+      if (!querySnapshot.empty) {
+          throw new Error('Business name already taken.');
       }
-      const newBusinessId = `b${mockBusinesses.length + 1}`;
-      const newUserId = `biz${mockUsers.length + 1}`;
+      
+      const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
+      const user = userCredential.user!;
 
-      const newUser: User = { id: newUserId, email, role: UserRole.BUSINESS, businessId: newBusinessId };
-      const newBusiness: Business = { id: newBusinessId, name: businessName, slug, ownerId: newUserId, createdAt: new Date() };
+      const batch = db.batch();
+      
+      const businessDocRef = db.collection("businesses").doc();
+      const newBusinessData = { 
+          name: businessName, 
+          slug, 
+          ownerId: user.uid, 
+          createdAt: new Date().toISOString() 
+      };
+      batch.set(businessDocRef, newBusinessData);
 
-      mockUsers.push(newUser);
-      mockBusinesses.push(newBusiness);
+      const userDocRef = db.collection('users').doc(user.uid);
+      const newUser: Omit<User, 'id'> = { 
+          email: user.email!, 
+          role: UserRole.BUSINESS, 
+          businessId: businessDocRef.id 
+      };
+      batch.set(userDocRef, newUser);
 
-      return mockApi({ user: newUser, business: newBusiness });
+      await batch.commit();
+
+      const newBusiness: Business = { id: businessDocRef.id, ...newBusinessData };
+
+      return {
+          user: { id: user.uid, ...newUser },
+          business: newBusiness
+      };
   },
-  logout: (): Promise<void> => mockApi(undefined),
-  getCurrentUser: (): Promise<User | null> => {
-      // In a real app, this would check session/token. We'll simulate being logged in as the test business.
-      const user = mockUsers.find(u => u.role === UserRole.BUSINESS);
-      return mockApi(user || null);
+
+  logout: (): Promise<void> => auth.signOut(),
+
+  getUserProfile: async (uid: string): Promise<User | null> => {
+      const userDocRef = db.collection('users').doc(uid);
+      const userDoc = await userDocRef.get();
+      if (userDoc.exists) {
+          return { id: uid, ...userDoc.data() } as User;
+      }
+      return null;
+  },
+  
+  // Image Upload
+  uploadImage: async (file: File, path: string): Promise<string> => {
+      const storageRef = storage.ref(path);
+      const snapshot = await storageRef.put(file);
+      const downloadURL = await snapshot.ref.getDownloadURL();
+      return downloadURL;
   },
 
   // Business Data
-  getBusinessBySlug: (slug: string): Promise<Business | null> => {
-      const business = mockBusinesses.find(b => b.slug === slug);
-      return mockApi(business || null);
+  getBusinessBySlug: async (slug: string): Promise<Business | null> => {
+      const q = db.collection("businesses").where("slug", "==", slug).limit(1);
+      const snapshot = await q.get();
+      if (snapshot.empty) return null;
+      const docData = snapshot.docs[0].data();
+      return { id: snapshot.docs[0].id, ...convertDocTimestamps(docData) } as Business;
   },
-  getMenu: (businessId: string): Promise<{ categories: Category[], items: MenuItem[] }> => {
-      const categories = mockCategories.filter(c => c.businessId === businessId);
-      const items = mockMenuItems.filter(i => i.businessId === businessId);
-      return mockApi({ categories, items });
+  
+  getMenu: async (businessId: string): Promise<{ categories: Category[], items: MenuItem[] }> => {
+      const categoriesQuery = db.collection("categories").where("businessId", "==", businessId);
+      const itemsQuery = db.collection("menuItems").where("businessId", "==", businessId);
+
+      const [categoriesSnapshot, itemsSnapshot] = await Promise.all([
+          categoriesQuery.get(),
+          itemsQuery.get()
+      ]);
+
+      const categories = categoriesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Category));
+      const items = itemsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MenuItem));
+      
+      return { categories, items };
   },
-  addMenuItem: (item: Omit<MenuItem, 'id'>): Promise<MenuItem> => {
-      const newItem: MenuItem = { ...item, id: `m${mockMenuItems.length + 1}`};
-      mockMenuItems.push(newItem);
-      return mockApi(newItem);
+
+  addMenuItem: async (item: Omit<MenuItem, 'id'>): Promise<MenuItem> => {
+      const docRef = await db.collection("menuItems").add(item);
+      return { ...item, id: docRef.id };
   },
-  updateMenuItem: (item: MenuItem): Promise<MenuItem> => {
-      const index = mockMenuItems.findIndex(i => i.id === item.id);
-      if (index > -1) {
-        mockMenuItems[index] = item;
-        return mockApi(item);
-      }
-      return mockApiError('Item not found');
+
+  updateMenuItem: async (item: MenuItem): Promise<MenuItem> => {
+      const { id, ...itemData } = item;
+      const docRef = db.collection("menuItems").doc(id);
+      await docRef.update(itemData);
+      return item;
   },
+
   deleteMenuItem: (itemId: string): Promise<void> => {
-      mockMenuItems = mockMenuItems.filter(i => i.id !== itemId);
-      return mockApi(undefined);
+      const docRef = db.collection("menuItems").doc(itemId);
+      return docRef.delete();
   },
 
   // Orders
-  getOrders: (businessId: string): Promise<Order[]> => {
-      const orders = mockOrders.filter(o => o.businessId === businessId);
-      return mockApi(orders);
+  onOrdersUpdate: (businessId: string, callback: (orders: Order[]) => void): () => void => {
+    const q = db.collection("orders")
+      .where("businessId", "==", businessId)
+      .where("status", "in", [OrderStatus.PENDING, OrderStatus.IN_PREPARATION, OrderStatus.READY])
+      .orderBy("createdAt", "asc");
+
+    const unsubscribe = q.onSnapshot((querySnapshot) => {
+        const orders = querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            return { id: doc.id, ...convertDocTimestamps(data) } as Order;
+        });
+        callback(orders);
+    });
+
+    return unsubscribe;
   },
-  placeOrder: (order: Omit<Order, 'id' | 'createdAt' | 'status'>): Promise<Order> => {
-      const newOrder: Order = {
-          ...order,
-          id: `o${mockOrders.length + 1}`,
-          createdAt: new Date(),
+  
+  getOrders: async (businessId: string): Promise<Order[]> => {
+      const q = db.collection("orders").where("businessId", "==", businessId).orderBy("createdAt", "desc");
+      const snapshot = await q.get();
+      return snapshot.docs.map(d => ({id: d.id, ...convertDocTimestamps(d.data())} as Order));
+  },
+  
+  placeOrder: async (orderData: Omit<Order, 'id' | 'createdAt' | 'status'>): Promise<Order> => {
+      const orderPayload = {
+          ...orderData,
           status: OrderStatus.PENDING,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       };
-      mockOrders.push(newOrder);
-      // Simulate real-time update for kitchen
-      window.dispatchEvent(new CustomEvent('mock-order-added', { detail: newOrder }));
-      return mockApi(newOrder);
+      const docRef = await db.collection("orders").add(orderPayload);
+      return { ...orderData, id: docRef.id, status: OrderStatus.PENDING, createdAt: new Date().toISOString() };
   },
-  updateOrderStatus: (orderId: string, status: OrderStatus): Promise<Order> => {
-      const order = mockOrders.find(o => o.id === orderId);
-      if (order) {
-          order.status = status;
-          // Simulate real-time update for kitchen
-          window.dispatchEvent(new CustomEvent('mock-order-updated', { detail: order }));
-          return mockApi(order);
-      }
-      return mockApiError('Order not found');
+
+  updateOrderStatus: (orderId: string, status: OrderStatus): Promise<void> => {
+      const docRef = db.collection("orders").doc(orderId);
+      return docRef.update({ status });
   },
   
   // Admin
-  getAllBusinesses: (): Promise<Business[]> => mockApi(mockBusinesses),
-  getBusinessMetrics: (businessId: string): Promise<{totalOrders: number, totalRevenue: number}> => {
-      const orders = mockOrders.filter(o => o.businessId === businessId && o.status === OrderStatus.COMPLETED);
+  getAllBusinesses: async (): Promise<Business[]> => {
+      const snapshot = await db.collection('businesses').get();
+      return snapshot.docs.map(d => ({id: d.id, ...convertDocTimestamps(d.data())} as Business));
+  },
+
+  getBusinessMetrics: async (businessId: string): Promise<{totalOrders: number, totalRevenue: number}> => {
+      const q = db.collection("orders").where("businessId", "==", businessId).where("status", "==", OrderStatus.COMPLETED);
+      const snapshot = await q.get();
+      const orders = snapshot.docs.map(d => d.data() as Order);
       const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
-      return mockApi({ totalOrders: orders.length, totalRevenue });
+      return { totalOrders: orders.length, totalRevenue };
   }
 };

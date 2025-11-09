@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useAuth } from '../../hooks/useAuth';
@@ -22,6 +21,9 @@ const DashboardPage: React.FC = () => {
                 } finally {
                     setLoading(false);
                 }
+            } else if (user && !user.businessId) {
+                // User is loaded but has no businessId, so they can't have orders.
+                setLoading(false);
             }
         };
         fetchOrders();
@@ -34,8 +36,9 @@ const DashboardPage: React.FC = () => {
 
     const salesData = [
       { name: 'Today', sales: totalRevenue },
-      { name: 'Yesterday', sales: totalRevenue * 0.8 }, // Mock data
-      { name: '2 days ago', sales: totalRevenue * 1.1 }, // Mock data
+      // In a real app, you would fetch historical data.
+      { name: 'Yesterday', sales: 0 },
+      { name: '2 days ago', sales: 0 },
     ];
 
     if (loading) return <div>Loading dashboard...</div>;
@@ -95,13 +98,15 @@ const DashboardPage: React.FC = () => {
                         <tbody className="bg-white divide-y divide-gray-200">
                             {orders.slice(0, 5).map(order => (
                                 <tr key={order.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{order.id}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{order.id.slice(0, 8)}...</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.tableNumber}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                                             order.status === OrderStatus.COMPLETED ? 'bg-green-100 text-green-800' :
                                             order.status === OrderStatus.PENDING ? 'bg-yellow-100 text-yellow-800' :
-                                            'bg-blue-100 text-blue-800'
+                                            order.status === OrderStatus.IN_PREPARATION ? 'bg-blue-100 text-blue-800' :
+                                            order.status === OrderStatus.READY ? 'bg-indigo-100 text-indigo-800' :
+                                            'bg-gray-100 text-gray-800'
                                         }`}>
                                             {order.status}
                                         </span>

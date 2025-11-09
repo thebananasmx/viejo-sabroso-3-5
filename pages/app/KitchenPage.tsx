@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { firebaseService } from '../../services/firebaseService';
@@ -20,52 +19,27 @@ const KitchenPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchOrders = async () => {
-            if (user?.businessId) {
-                try {
-                    const fetchedOrders = await firebaseService.getOrders(user.businessId);
-                    setOrders(fetchedOrders.filter(o => o.status !== OrderStatus.COMPLETED && o.status !== OrderStatus.CANCELED).sort((a,b) => a.createdAt.getTime() - b.createdAt.getTime()));
-                } catch (error) {
-                    console.error("Failed to fetch orders", error);
-                } finally {
-                    setLoading(false);
-                }
-            }
-        };
+        if (!user?.businessId) {
+            setLoading(false);
+            return;
+        }
+        
+        setLoading(true);
+        const unsubscribe = firebaseService.onOrdersUpdate(user.businessId, (updatedOrders) => {
+            setOrders(updatedOrders);
+            setLoading(false);
+        });
 
-        fetchOrders();
-
-        // Mock real-time updates
-        const handleOrderAdded = (event: Event) => {
-            const newOrder = (event as CustomEvent).detail;
-            if (newOrder.businessId === user?.businessId) {
-                setOrders(prev => [...prev, newOrder].sort((a,b) => a.createdAt.getTime() - b.createdAt.getTime()));
-            }
-        };
-        const handleOrderUpdated = (event: Event) => {
-            const updatedOrder = (event as CustomEvent).detail;
-            setOrders(prev => {
-                const newOrders = prev.map(o => o.id === updatedOrder.id ? updatedOrder : o);
-                if (updatedOrder.status === OrderStatus.COMPLETED || updatedOrder.status === OrderStatus.CANCELED) {
-                    return newOrders.filter(o => o.id !== updatedOrder.id);
-                }
-                return newOrders;
-            });
-        };
-        window.addEventListener('mock-order-added', handleOrderAdded);
-        window.addEventListener('mock-order-updated', handleOrderUpdated);
-        return () => {
-            window.removeEventListener('mock-order-added', handleOrderAdded);
-            window.removeEventListener('mock-order-updated', handleOrderUpdated);
-        };
+        return () => unsubscribe(); // Cleanup subscription on unmount
     }, [user]);
 
     const handleUpdateStatus = async (orderId: string, newStatus: OrderStatus) => {
         try {
             await firebaseService.updateOrderStatus(orderId, newStatus);
-            // State update is handled by the mock event listener
+            // Firestore's onSnapshot will handle the UI update automatically
         } catch (error) {
             console.error("Failed to update order status", error);
+            alert("Failed to update order status.");
         }
     };
     
@@ -96,8 +70,8 @@ const KitchenPage: React.FC = () => {
                                             <p className="text-sm text-gray-500">#{order.id.slice(-4)}</p>
                                         </div>
                                         <ul className="mt-2 space-y-1 border-t pt-2">
-                                            {order.items.map(item => (
-                                                <li key={item.menuItemId} className="flex justify-between text-gray-700">
+                                            {order.items.map((item, index) => (
+                                                <li key={`${item.menuItemId}-${index}`} className="flex justify-between text-gray-700">
                                                     <span>{item.quantity}x {item.name}</span>
                                                 </li>
                                             ))}

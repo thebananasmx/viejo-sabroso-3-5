@@ -1,11 +1,10 @@
-
 export enum UserRole {
   BUSINESS = 'business',
   ADMIN = 'admin',
 }
 
 export interface User {
-  id: string;
+  id: string; // This will be the Firebase Auth UID
   email: string;
   role: UserRole;
   businessId?: string;
@@ -15,8 +14,8 @@ export interface Business {
   id: string;
   name: string;
   slug: string;
-  ownerId: string;
-  createdAt: Date;
+  ownerId: string; // Firebase Auth UID of the owner
+  createdAt: string; // ISO string date
 }
 
 export interface Category {
@@ -57,5 +56,5 @@ export interface Order {
   items: OrderItem[];
   total: number;
   status: OrderStatus;
-  createdAt: Date;
+  createdAt: string; // ISO string date
 }
