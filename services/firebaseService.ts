@@ -174,20 +174,18 @@ export const firebaseService = {
 
   // Orders
   onOrdersUpdate: (businessId: string, callback: (orders: Order[]) => void): () => void => {
-    // FIX: Removed status filter from query to prevent issues with missing composite indexes.
-    // Filtering is now handled on the client side.
-    const q = query(collection(db, "orders"), 
-        where("businessId", "==", businessId),
-        orderBy("createdAt", "asc"));
+    // FIX: Removed orderBy from the query to prevent needing a composite index.
+    // Sorting and filtering are now both handled client-side for maximum reliability.
+    const q = query(collection(db, "orders"), where("businessId", "==", businessId));
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        // FIX: Property 'docs' does not exist on type 'DocumentSnapshot'. Adding a type guard to ensure we have a QuerySnapshot.
         if ('docs' in querySnapshot) {
             const activeStatuses = [OrderStatus.PENDING, OrderStatus.IN_PREPARATION, OrderStatus.READY];
-            const orders = querySnapshot.docs.map(doc => {
-                const data = doc.data();
-                return { id: doc.id, ...convertDocTimestamps(data) } as Order;
-            }).filter(order => activeStatuses.includes(order.status));
+            const orders = querySnapshot.docs
+                .map(doc => ({ id: doc.id, ...convertDocTimestamps(doc.data()) } as Order))
+                .filter(order => activeStatuses.includes(order.status))
+                .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+            
             callback(orders);
         }
     });
