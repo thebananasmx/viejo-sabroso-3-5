@@ -119,11 +119,18 @@ const CustomerMenuPage: React.FC = () => {
 
     const handlePlaceOrder = async () => {
         if (!tableNumber || cart.length === 0 || !business) return;
+        
+        const parsedTableNumber = parseInt(tableNumber, 10);
+        if (isNaN(parsedTableNumber) || parsedTableNumber <= 0) {
+            addToast("Por favor, ingresa un número de mesa válido.", 'error');
+            return;
+        }
+
         setIsPlacingOrder(true);
         try {
             await firebaseService.placeOrder({
                 businessId: business.id,
-                tableNumber: parseInt(tableNumber, 10),
+                tableNumber: parsedTableNumber,
                 items: cart,
                 total: cartTotal,
             });
