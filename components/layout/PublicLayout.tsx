@@ -1,11 +1,13 @@
 
 import React, { useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import Button from '../ui/Button';
 import { XIcon } from '../icons/Icons';
 
 const PublicLayout: React.FC = () => {
   const [isBannerVisible, setIsBannerVisible] = useState(true);
+  const location = useLocation();
+  const isMenuPage = location.pathname.startsWith('/menu/');
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -17,23 +19,25 @@ const PublicLayout: React.FC = () => {
           </button>
         </div>
       )}
-      <header className="bg-brand-dark/80 backdrop-blur-md sticky top-0 z-30 border-b border-gray-800">
-        <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <Link to="/" className="text-2xl font-bold text-brand-light">
-              Viejo Sabroso
-            </Link>
-            <div className="flex items-center space-x-6">
-              <Link to="/app/login" className="text-gray-300 hover:text-brand-primary font-medium">
-                Log In
+      {!isMenuPage && (
+        <header className="bg-brand-dark/80 backdrop-blur-md sticky top-0 z-30 border-b border-gray-800">
+          <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-20">
+              <Link to="/" className="text-2xl font-bold text-brand-light">
+                Viejo Sabroso
               </Link>
-              <Link to="/app/register">
-                <Button>Get Started</Button>
-              </Link>
+              <div className="flex items-center space-x-6">
+                <Link to="/app/login" className="text-gray-300 hover:text-brand-primary font-medium">
+                  Log In
+                </Link>
+                <Link to="/app/register">
+                  <Button>Get Started</Button>
+                </Link>
+              </div>
             </div>
-          </div>
-        </nav>
-      </header>
+          </nav>
+        </header>
+      )}
       <main className="flex-grow">
         <Outlet />
       </main>
