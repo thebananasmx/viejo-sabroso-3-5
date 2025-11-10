@@ -43,7 +43,7 @@ const CustomerMenuPage: React.FC = () => {
             }
         };
         fetchBusinessAndMenu();
-    }, [slug]);
+    }, [slug, addToast]);
 
     const addToCart = (item: MenuItem) => {
         setCart(prevCart => {
@@ -82,6 +82,13 @@ const CustomerMenuPage: React.FC = () => {
         }
     };
 
+    const handleTableNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        // Allow only digits by removing non-numeric characters
+        const sanitizedValue = value.replace(/[^0-9]/g, '');
+        setTableNumber(sanitizedValue);
+    };
+
     if (loading) return (
         <div className="flex justify-center items-center h-screen">
             <Spinner size="lg" />
@@ -110,10 +117,12 @@ const CustomerMenuPage: React.FC = () => {
                     </div>
                     <div className="mt-4">
                         <input
-                            type="number"
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
                             placeholder="Your Table Number"
                             value={tableNumber}
-                            onChange={e => setTableNumber(e.target.value)}
+                            onChange={handleTableNumberChange}
                             className="w-full px-4 py-2.5 bg-brand-dark-accent border border-gray-700 rounded-lg shadow-sm text-brand-light placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent sm:text-sm"
                         />
                     </div>
