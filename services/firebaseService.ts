@@ -268,6 +268,7 @@ export const firebaseService = {
     const orderDocRef = db.collection('orders').doc(); // Pre-generate ID for return value
 
     let newOrderNumber: number;
+    const now = new Date(); // Use a single date object for consistency
 
     await db.runTransaction(async (transaction) => {
         const businessDoc = await transaction.get(businessDocRef);
@@ -283,7 +284,7 @@ export const firebaseService = {
         const orderPayload = {
             ...orderData,
             status: OrderStatus.PENDING,
-            createdAt: new Date().toISOString(),
+            createdAt: Timestamp.fromDate(now), // Use Firestore Timestamp for transaction
             orderNumber: newOrderNumber,
         };
         transaction.set(orderDocRef, orderPayload);
@@ -293,7 +294,7 @@ export const firebaseService = {
         ...orderData, 
         id: orderDocRef.id, 
         status: OrderStatus.PENDING, 
-        createdAt: new Date().toISOString(),
+        createdAt: now.toISOString(), // Return ISO string to match the Order type
         orderNumber: newOrderNumber!
     };
   },
