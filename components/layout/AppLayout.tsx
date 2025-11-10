@@ -29,7 +29,7 @@ const AppLayout: React.FC = () => {
     };
 
     const navItems = [
-        { name: 'Tablero', to: '/app/dashboard', icon: <DashboardIcon className="h-6 w-6" /> },
+        { name: 'Dashboard', to: '/app/dashboard', icon: <DashboardIcon className="h-6 w-6" /> },
         { name: 'Menú', to: '/app/menu', icon: <MenuBoardIcon className="h-6 w-6" /> },
         { name: 'Cocina', to: '/app/kitchen', icon: <KitchenIcon className="h-6 w-6" /> },
         { name: 'Configuración', to: '/app/settings', icon: <SettingsIcon className="h-6 w-6" /> },

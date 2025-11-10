@@ -75,7 +75,7 @@ const DashboardPage: React.FC = () => {
 
     return (
         <div>
-            <h1 className="text-3xl font-bold text-brand-light mb-6">Tablero</h1>
+            <h1 className="text-3xl font-bold text-brand-light mb-6">Dashboard</h1>
             
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

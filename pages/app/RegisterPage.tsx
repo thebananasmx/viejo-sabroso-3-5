@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/ui/Button';
@@ -46,7 +47,7 @@ const RegisterPage: React.FC = () => {
                         <QRCodeGenerator slug={registeredSlug} />
                     </div>
                     <Button onClick={() => navigate('/app/dashboard')} className="mt-8 w-full">
-                        Ir al Tablero
+                        Ir al Dashboard
                     </Button>
                 </div>
             </div>
