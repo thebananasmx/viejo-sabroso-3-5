@@ -11,6 +11,63 @@ import { CheckCircleIcon } from '../../components/icons/Icons';
 import { useToast } from '../../hooks/useToast';
 import Spinner from '../../components/ui/Spinner';
 
+interface CartContentProps {
+    cart: OrderItem[];
+    cartTotal: number;
+    tableNumber: string;
+    isPlacingOrder: boolean;
+    handleTableNumberChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handlePlaceOrder: () => void;
+}
+
+const CartContent: React.FC<CartContentProps> = ({
+    cart,
+    cartTotal,
+    tableNumber,
+    isPlacingOrder,
+    handleTableNumberChange,
+    handlePlaceOrder,
+}) => {
+    if (cart.length === 0) {
+        return <p className="text-gray-400">Tu carrito está vacío.</p>;
+    }
+
+    return (
+        <>
+            <div className="space-y-2 mb-4 max-h-64 overflow-y-auto">
+                {cart.map(item => (
+                    <div key={item.menuItemId} className="flex justify-between items-center text-sm">
+                        <span className="font-medium text-brand-light">{item.quantity}x {item.name}</span>
+                        <span className="text-gray-300">${(item.quantity * item.price).toFixed(2)}</span>
+                    </div>
+                ))}
+            </div>
+            <div className="border-t border-gray-700 pt-4 flex justify-between font-bold text-lg text-brand-light">
+                <span>Total</span>
+                <span>${cartTotal.toFixed(2)}</span>
+            </div>
+            <div className="mt-4">
+                <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    placeholder="Tu Número de Mesa"
+                    value={tableNumber}
+                    onChange={handleTableNumberChange}
+                    className="w-full px-4 py-2.5 bg-brand-dark-accent border border-gray-700 rounded-lg shadow-sm text-brand-light placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent sm:text-sm"
+                />
+            </div>
+            <Button 
+                className="w-full mt-4" 
+                onClick={handlePlaceOrder}
+                disabled={!tableNumber || cart.length === 0 || isPlacingOrder}
+            >
+                {isPlacingOrder ? 'Realizando Pedido...' : 'Realizar Pedido'}
+            </Button>
+        </>
+    );
+};
+
 const CustomerMenuPage: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
     const [business, setBusiness] = useState<Business | null>(null);
@@ -97,45 +154,6 @@ const CustomerMenuPage: React.FC = () => {
 
     if (!business) return <div className="text-center p-10">Menú no encontrado.</div>;
 
-    const CartContent = () => (
-        <>
-            {cart.length === 0 ? (
-                <p className="text-gray-400">Tu carrito está vacío.</p>
-            ) : (
-                <>
-                    <div className="space-y-2 mb-4 max-h-64 overflow-y-auto">
-                        {cart.map(item => (
-                            <div key={item.menuItemId} className="flex justify-between items-center text-sm">
-                                <span className="font-medium text-brand-light">{item.quantity}x {item.name}</span>
-                                <span className="text-gray-300">${(item.quantity * item.price).toFixed(2)}</span>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="border-t border-gray-700 pt-4 flex justify-between font-bold text-lg text-brand-light">
-                        <span>Total</span>
-                        <span>${cartTotal.toFixed(2)}</span>
-                    </div>
-                    <div className="mt-4">
-                        <input
-                            type="tel"
-                            placeholder="Tu Número de Mesa"
-                            value={tableNumber}
-                            onChange={handleTableNumberChange}
-                            className="w-full px-4 py-2.5 bg-brand-dark-accent border border-gray-700 rounded-lg shadow-sm text-brand-light placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent sm:text-sm"
-                        />
-                    </div>
-                    <Button 
-                        className="w-full mt-4" 
-                        onClick={handlePlaceOrder}
-                        disabled={!tableNumber || cart.length === 0 || isPlacingOrder}
-                    >
-                        {isPlacingOrder ? 'Realizando Pedido...' : 'Realizar Pedido'}
-                    </Button>
-                </>
-            )}
-        </>
-    );
-
     const cartItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
     return (
@@ -179,7 +197,14 @@ const CustomerMenuPage: React.FC = () => {
                     <div className="hidden md:block sticky top-24">
                         <Card className="p-6">
                              <h2 className="text-xl font-bold mb-4 text-brand-light">Tu Pedido</h2>
-                            <CartContent />
+                            <CartContent
+                                cart={cart}
+                                cartTotal={cartTotal}
+                                tableNumber={tableNumber}
+                                isPlacingOrder={isPlacingOrder}
+                                handleTableNumberChange={handleTableNumberChange}
+                                handlePlaceOrder={handlePlaceOrder}
+                            />
                         </Card>
                     </div>
                 </div>
@@ -198,7 +223,14 @@ const CustomerMenuPage: React.FC = () => {
             )}
 
             <Modal isOpen={isCartModalOpen} onClose={() => setIsCartModalOpen(false)} title="Tu Pedido">
-                <CartContent />
+                <CartContent
+                    cart={cart}
+                    cartTotal={cartTotal}
+                    tableNumber={tableNumber}
+                    isPlacingOrder={isPlacingOrder}
+                    handleTableNumberChange={handleTableNumberChange}
+                    handlePlaceOrder={handlePlaceOrder}
+                />
             </Modal>
             
             <Modal isOpen={isOrderPlaced} onClose={() => setIsOrderPlaced(false)} title="¡Pedido Realizado!">
