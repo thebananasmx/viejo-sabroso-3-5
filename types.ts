@@ -17,7 +17,6 @@ export interface Business {
   ownerId: string; // Firebase Auth UID of the owner
   createdAt: string; // ISO string date
   logoUrl?: string;
-  orderCounter?: number;
 }
 
 export interface Category {
@@ -59,5 +58,4 @@ export interface Order {
   total: number;
   status: OrderStatus;
   createdAt: string; // ISO string date
-  orderNumber: number;
 }

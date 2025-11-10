@@ -55,7 +55,6 @@ export const firebaseService = {
           slug, 
           ownerId: user.uid, 
           createdAt: new Date().toISOString(),
-          orderCounter: 0,
       };
       batch.set(businessDocRef, newBusinessData);
 
@@ -263,39 +262,16 @@ export const firebaseService = {
       return snapshot.docs.map(d => ({id: d.id, ...convertDocTimestamps(d.data())} as Order));
   },
   
-  placeOrder: async (orderData: Omit<Order, 'id' | 'createdAt' | 'status' | 'orderNumber'>): Promise<Order> => {
-    const businessDocRef = db.collection('businesses').doc(orderData.businessId);
-    const orderDocRef = db.collection('orders').doc(); // Pre-generate ID for return value
-
-    let newOrderNumber: number;
-    const now = new Date(); // Use a single date object for consistency
-
-    await db.runTransaction(async (transaction) => {
-        const businessDoc = await transaction.get(businessDocRef);
-        if (!businessDoc.exists) {
-            throw new Error("El negocio no existe.");
-        }
-
-        const currentCounter = businessDoc.data()?.orderCounter || 0;
-        newOrderNumber = currentCounter + 1;
-
-        transaction.update(businessDocRef, { orderCounter: newOrderNumber });
-        
-        const orderPayload = {
-            ...orderData,
-            status: OrderStatus.PENDING,
-            createdAt: Timestamp.fromDate(now), // Use Firestore Timestamp for transaction
-            orderNumber: newOrderNumber,
-        };
-        transaction.set(orderDocRef, orderPayload);
-    });
-
-    return { 
-        ...orderData, 
-        id: orderDocRef.id, 
-        status: OrderStatus.PENDING, 
-        createdAt: now.toISOString(), // Return ISO string to match the Order type
-        orderNumber: newOrderNumber!
+  placeOrder: async (orderData: Omit<Order, 'id' | 'createdAt' | 'status'>): Promise<Order> => {
+    const newOrderData = {
+        ...orderData,
+        status: OrderStatus.PENDING,
+        createdAt: new Date().toISOString(),
+    };
+    const docRef = await db.collection('orders').add(newOrderData);
+    return {
+        ...newOrderData,
+        id: docRef.id,
     };
   },
 

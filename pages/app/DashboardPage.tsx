@@ -127,7 +127,7 @@ const DashboardPage: React.FC = () => {
                             {orders.slice(0, 5).map(order => (
                                 <tr key={order.id}>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-brand-light">
-                                        {order.orderNumber ? `#${String(order.orderNumber).padStart(4, '0')}` : `${order.id.slice(0, 8)}...`}
+                                        #{order.id.slice(-6).toUpperCase()}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{order.tableNumber}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">

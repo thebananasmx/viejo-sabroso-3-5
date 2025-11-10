@@ -77,7 +77,7 @@ const KitchenPage: React.FC = () => {
                                         <div className="flex justify-between items-center">
                                             <h3 className="font-bold text-lg text-brand-light">Mesa {order.tableNumber}</h3>
                                             <p className="text-sm text-gray-400">
-                                                {order.orderNumber ? `#${String(order.orderNumber).padStart(4, '0')}` : `#${order.id.slice(-4)}`}
+                                                #{order.id.slice(-4).toUpperCase()}
                                             </p>
                                         </div>
                                         <ul className="mt-2 space-y-1 border-t border-gray-700 pt-2">
