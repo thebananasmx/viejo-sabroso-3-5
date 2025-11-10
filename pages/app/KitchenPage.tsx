@@ -76,7 +76,9 @@ const KitchenPage: React.FC = () => {
                                     <Card key={order.id} className="p-4">
                                         <div className="flex justify-between items-center">
                                             <h3 className="font-bold text-lg text-brand-light">Mesa {order.tableNumber}</h3>
-                                            <p className="text-sm text-gray-400">#{order.id.slice(-4)}</p>
+                                            <p className="text-sm text-gray-400">
+                                                {order.orderNumber ? `#${String(order.orderNumber).padStart(4, '0')}` : `#${order.id.slice(-4)}`}
+                                            </p>
                                         </div>
                                         <ul className="mt-2 space-y-1 border-t border-gray-700 pt-2">
                                             {order.items.map((item, index) => (

@@ -117,7 +117,7 @@ const DashboardPage: React.FC = () => {
                     <table className="min-w-full divide-y divide-gray-700">
                         <thead className="bg-brand-dark-accent/50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID de Pedido</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Nº Pedido</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Mesa</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Estado</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Total</th>
@@ -126,7 +126,9 @@ const DashboardPage: React.FC = () => {
                         <tbody className="bg-brand-dark-accent divide-y divide-gray-700">
                             {orders.slice(0, 5).map(order => (
                                 <tr key={order.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-brand-light">{order.id.slice(0, 8)}...</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-brand-light">
+                                        {order.orderNumber ? `#${String(order.orderNumber).padStart(4, '0')}` : `${order.id.slice(0, 8)}...`}
+                                    </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{order.tableNumber}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${

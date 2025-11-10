@@ -54,7 +54,8 @@ export const firebaseService = {
           name: businessName, 
           slug, 
           ownerId: user.uid, 
-          createdAt: new Date().toISOString() 
+          createdAt: new Date().toISOString(),
+          orderCounter: 0,
       };
       batch.set(businessDocRef, newBusinessData);
 
@@ -262,16 +263,39 @@ export const firebaseService = {
       return snapshot.docs.map(d => ({id: d.id, ...convertDocTimestamps(d.data())} as Order));
   },
   
-  placeOrder: async (orderData: Omit<Order, 'id' | 'createdAt' | 'status'>): Promise<Order> => {
-      const orderPayload = {
-          ...orderData,
-          status: OrderStatus.PENDING,
-          // FIX: Use v8 serverTimestamp
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      };
-      // FIX: Use v8 add
-      const docRef = await db.collection("orders").add(orderPayload as any);
-      return { ...orderData, id: docRef.id, status: OrderStatus.PENDING, createdAt: new Date().toISOString() };
+  placeOrder: async (orderData: Omit<Order, 'id' | 'createdAt' | 'status' | 'orderNumber'>): Promise<Order> => {
+    const businessDocRef = db.collection('businesses').doc(orderData.businessId);
+    const orderDocRef = db.collection('orders').doc(); // Pre-generate ID for return value
+
+    let newOrderNumber: number;
+
+    await db.runTransaction(async (transaction) => {
+        const businessDoc = await transaction.get(businessDocRef);
+        if (!businessDoc.exists) {
+            throw new Error("El negocio no existe.");
+        }
+
+        const currentCounter = businessDoc.data()?.orderCounter || 0;
+        newOrderNumber = currentCounter + 1;
+
+        transaction.update(businessDocRef, { orderCounter: newOrderNumber });
+        
+        const orderPayload = {
+            ...orderData,
+            status: OrderStatus.PENDING,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            orderNumber: newOrderNumber,
+        };
+        transaction.set(orderDocRef, orderPayload);
+    });
+
+    return { 
+        ...orderData, 
+        id: orderDocRef.id, 
+        status: OrderStatus.PENDING, 
+        createdAt: new Date().toISOString(),
+        orderNumber: newOrderNumber!
+    };
   },
 
   updateOrderStatus: (orderId: string, status: OrderStatus): Promise<void> => {
