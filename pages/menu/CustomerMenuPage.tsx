@@ -117,9 +117,7 @@ const CustomerMenuPage: React.FC = () => {
                     </div>
                     <div className="mt-4">
                         <input
-                            type="text"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
+                            type="tel"
                             placeholder="Tu Número de Mesa"
                             value={tableNumber}
                             onChange={handleTableNumberChange}
