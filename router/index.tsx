@@ -14,6 +14,7 @@ import AdminLayout from '../components/layout/AdminLayout';
 import HomePage from '../pages/public/HomePage';
 import CustomerMenuPage from '../pages/menu/CustomerMenuPage';
 import StyleguidePage from '../pages/public/StyleguidePage'; // Import the new page
+import ChangelogPage from '../pages/public/ChangelogPage';
 
 // App Pages
 import LoginPage from '../pages/app/LoginPage';
@@ -72,6 +73,7 @@ const router = createHashRouter([
       { index: true, element: <HomePage /> },
       { path: 'menu/:slug', element: <CustomerMenuPage /> },
       { path: 'styleguide', element: <StyleguidePage /> }, // Add the styleguide route
+      { path: 'changelog', element: <ChangelogPage /> },
     ],
   },
   {

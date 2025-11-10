@@ -44,9 +44,13 @@ const PublicLayout: React.FC = () => {
       <footer className="bg-brand-dark border-t border-gray-800">
         <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center text-gray-500">
           <p>&copy; {new Date().getFullYear()} Viejo Sabroso. Todos los derechos reservados.</p>
-          <div className="mt-4">
+          <div className="mt-4 flex justify-center items-center space-x-4">
             <Link to="/styleguide" className="text-sm text-gray-600 hover:text-brand-primary">
-              Guía de Estilos
+              Style Guide
+            </Link>
+            <span className="text-gray-600">|</span>
+            <Link to="/changelog" className="text-sm text-gray-600 hover:text-brand-primary">
+              Change Log
             </Link>
           </div>
         </div>
