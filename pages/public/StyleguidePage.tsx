@@ -96,7 +96,7 @@ const StyleguidePage: React.FC = () => {
                                 <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Hamburguesa Clásica" className="w-32 h-32 object-cover flex-shrink-0"/>
                                 <div className="p-4 flex flex-col flex-grow">
                                     <h3 className="text-lg font-bold text-brand-light">Hamburguesa Clásica</h3>
-                                    <p className="text-gray-400 text-sm mt-1 flex-grow">Carne de res jugosa, lechuga fresca, tomate y queso cheddar en un pan brioche.</p>
+                                    <p className="text-gray-400 text-sm mt-1 flex-grow line-clamp-2">Carne de res jugosa, lechuga fresca, tomate y queso cheddar en un pan brioche. Acompañada de nuestras papas fritas caseras y una salsa especial de la casa que te encantará.</p>
                                     <div className="flex justify-between items-center mt-4">
                                         <p className="text-brand-primary font-bold text-lg">$14.99</p>
                                         <Button size="sm">Añadir</Button>

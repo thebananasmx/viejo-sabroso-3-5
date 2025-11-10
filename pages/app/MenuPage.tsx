@@ -263,7 +263,7 @@ const MenuPage: React.FC = () => {
                                 <div className="flex flex-col flex-grow">
                                     <div className="p-4 flex flex-col flex-grow">
                                         <h3 className="text-lg font-bold text-brand-light">{item.name}</h3>
-                                        <p className="text-gray-400 text-sm mt-1 flex-grow">{item.description}</p>
+                                        <p className="text-gray-400 text-sm mt-1 flex-grow line-clamp-2">{item.description}</p>
                                         <p className="text-brand-primary font-bold mt-2 text-lg">${item.price.toFixed(2)}</p>
                                     </div>
                                     <div className="p-4 bg-brand-dark flex justify-end space-x-2 border-t border-gray-800">
