@@ -1,13 +1,5 @@
-
-
-import { 
-    collection, getDocs, doc, getDoc, query, where, limit, writeBatch, 
-    addDoc, updateDoc, deleteDoc, onSnapshot, orderBy, serverTimestamp, setDoc
-} from 'firebase/firestore';
-import { 
-    signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut 
-} from 'firebase/auth';
-
+// FIX: Switched to Firebase v8 compatible imports
+import firebase from 'firebase/compat/app';
 import { db, auth, Timestamp } from '../firebaseConfig';
 import { Order, OrderStatus, Business, Category, MenuItem, User, UserRole } from '../types';
 
@@ -25,11 +17,13 @@ const convertDocTimestamps = (documentData: any) => {
 export const firebaseService = {
   // Auth
   login: async (email: string, pass: string): Promise<User> => {
-    const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-    const userDocRef = doc(db, 'users', userCredential.user!.uid);
-    const userDoc = await getDoc(userDocRef);
+    // FIX: Use v8 signInWithEmailAndPassword
+    const userCredential = await auth.signInWithEmailAndPassword(email, pass);
+    // FIX: Use v8 doc and get
+    const userDocRef = db.collection('users').doc(userCredential.user!.uid);
+    const userDoc = await userDocRef.get();
 
-    if (!userDoc.exists()) {
+    if (!userDoc.exists) {
       throw new Error("Datos del usuario no encontrados en Firestore.");
     }
     // FIX: Spread types may only be created from object types. Using Object.assign for robustness.
@@ -39,19 +33,23 @@ export const firebaseService = {
   registerBusiness: async (businessName: string, email: string, pass: string): Promise<{user: User, business: Business}> => {
       const slug = businessName.toLowerCase().replace(/\s+/g, '-');
       
-      const businessesRef = collection(db, "businesses");
-      const q = query(businessesRef, where("slug", "==", slug), limit(1));
-      const querySnapshot = await getDocs(q);
+      // FIX: Use v8 where, limit, and get
+      const businessesRef = db.collection("businesses");
+      const q = businessesRef.where("slug", "==", slug).limit(1);
+      const querySnapshot = await q.get();
       if (!querySnapshot.empty) {
           throw new Error('El nombre del negocio ya está en uso.');
       }
       
-      const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+      // FIX: Use v8 createUserWithEmailAndPassword
+      const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
       const user = userCredential.user!;
 
-      const batch = writeBatch(db);
+      // FIX: Use v8 batch
+      const batch = db.batch();
       
-      const businessDocRef = doc(collection(db, "businesses"));
+      // FIX: Use v8 doc() to create a new doc with an auto-generated ID
+      const businessDocRef = db.collection("businesses").doc();
       const newBusinessData = { 
           name: businessName, 
           slug, 
@@ -60,7 +58,8 @@ export const firebaseService = {
       };
       batch.set(businessDocRef, newBusinessData);
 
-      const userDocRef = doc(db, 'users', user.uid);
+      // FIX: Use v8 doc()
+      const userDocRef = db.collection('users').doc(user.uid);
       const newUser: Omit<User, 'id'> = { 
           email: user.email!, 
           role: UserRole.BUSINESS, 
@@ -79,25 +78,29 @@ export const firebaseService = {
   },
 
   registerAdmin: async (email: string, pass: string): Promise<User> => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+    // FIX: Use v8 createUserWithEmailAndPassword
+    const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
     const user = userCredential.user;
 
-    const userDocRef = doc(db, 'users', user.uid);
+    // FIX: Use v8 doc and set
+    const userDocRef = db.collection('users').doc(user.uid);
     const newUser: Omit<User, 'id'> = {
       email: user.email!,
       role: UserRole.ADMIN,
     };
-    await setDoc(userDocRef, newUser);
+    await userDocRef.set(newUser);
 
     return { id: user.uid, ...newUser };
   },
 
-  logout: (): Promise<void> => signOut(auth),
+  // FIX: Use v8 signOut
+  logout: (): Promise<void> => auth.signOut(),
 
   getUserProfile: async (uid: string): Promise<User | null> => {
-      const userDocRef = doc(db, 'users', uid);
-      const userDoc = await getDoc(userDocRef);
-      if (userDoc.exists()) {
+      // FIX: Use v8 doc and get
+      const userDocRef = db.collection('users').doc(uid);
+      const userDoc = await userDocRef.get();
+      if (userDoc.exists) {
           // FIX: Spread types may only be created from object types. Using Object.assign for robustness.
           return Object.assign({ id: uid }, userDoc.data()) as User;
       }
@@ -106,34 +109,38 @@ export const firebaseService = {
   
   // Business Data
   getBusinessBySlug: async (slug: string): Promise<Business | null> => {
-      const q = query(collection(db, "businesses"), where("slug", "==", slug), limit(1));
-      const snapshot = await getDocs(q);
+      // FIX: Use v8 query chain
+      const q = db.collection("businesses").where("slug", "==", slug).limit(1);
+      const snapshot = await q.get();
       if (snapshot.empty) return null;
       const docData = snapshot.docs[0].data();
       return { id: snapshot.docs[0].id, ...convertDocTimestamps(docData) } as Business;
   },
   
   getBusinessById: async (id: string): Promise<Business | null> => {
-      const businessDocRef = doc(db, 'businesses', id);
-      const businessDoc = await getDoc(businessDocRef);
-      if (businessDoc.exists()) {
+      // FIX: Use v8 doc and get
+      const businessDocRef = db.collection('businesses').doc(id);
+      const businessDoc = await businessDocRef.get();
+      if (businessDoc.exists) {
           return { id, ...convertDocTimestamps(businessDoc.data()) } as Business;
       }
       return null;
   },
 
   updateBusinessDetails: async (businessId: string, details: Partial<Business>): Promise<void> => {
-      const businessDocRef = doc(db, 'businesses', businessId);
-      await updateDoc(businessDocRef, details);
+      // FIX: Use v8 doc and update
+      const businessDocRef = db.collection('businesses').doc(businessId);
+      await businessDocRef.update(details);
   },
   
   getMenu: async (businessId: string): Promise<{ categories: Category[], items: MenuItem[] }> => {
-      const categoriesQuery = query(collection(db, "categories"), where("businessId", "==", businessId));
-      const itemsQuery = query(collection(db, "menuItems"), where("businessId", "==", businessId));
+      // FIX: Use v8 query chain and get
+      const categoriesQuery = db.collection("categories").where("businessId", "==", businessId);
+      const itemsQuery = db.collection("menuItems").where("businessId", "==", businessId);
 
       const [categoriesSnapshot, itemsSnapshot] = await Promise.all([
-          getDocs(categoriesQuery),
-          getDocs(itemsQuery)
+          categoriesQuery.get(),
+          itemsQuery.get()
       ]);
 
       // FIX: Spread types may only be created from object types. Using Object.assign for robustness.
@@ -145,44 +152,51 @@ export const firebaseService = {
   },
 
   addMenuItem: async (item: Omit<MenuItem, 'id'>): Promise<MenuItem> => {
-      const docRef = await addDoc(collection(db, "menuItems"), item);
+      // FIX: Use v8 add
+      const docRef = await db.collection("menuItems").add(item);
       return { ...item, id: docRef.id };
   },
 
   updateMenuItem: async (item: MenuItem): Promise<MenuItem> => {
       const { id, ...itemData } = item;
-      const docRef = doc(db, "menuItems", id);
-      await updateDoc(docRef, { ...itemData });
+      // FIX: Use v8 doc and update
+      const docRef = db.collection("menuItems").doc(id);
+      await docRef.update({ ...itemData });
       return item;
   },
 
   deleteMenuItem: (itemId: string): Promise<void> => {
-      const docRef = doc(db, "menuItems", itemId);
-      return deleteDoc(docRef);
+      // FIX: Use v8 doc and delete
+      const docRef = db.collection("menuItems").doc(itemId);
+      return docRef.delete();
   },
 
   addCategory: async (category: Omit<Category, 'id'>): Promise<Category> => {
-      const docRef = await addDoc(collection(db, "categories"), category);
+      // FIX: Use v8 add
+      const docRef = await db.collection("categories").add(category);
       return { ...category, id: docRef.id };
   },
 
   updateCategory: async (category: Category): Promise<Category> => {
       const { id, ...categoryData } = category;
-      const docRef = doc(db, "categories", id);
-      await updateDoc(docRef, { ...categoryData });
+      // FIX: Use v8 doc and update
+      const docRef = db.collection("categories").doc(id);
+      await docRef.update({ ...categoryData });
       return category;
   },
 
   deleteCategory: async (categoryId: string): Promise<void> => {
-      const batch = writeBatch(db);
+      // FIX: Use v8 batch
+      const batch = db.batch();
 
       // 1. Delete the category itself
-      const categoryRef = doc(db, "categories", categoryId);
+      const categoryRef = db.collection("categories").doc(categoryId);
       batch.delete(categoryRef);
 
       // 2. Find and delete all menu items in that category
-      const itemsQuery = query(collection(db, "menuItems"), where("categoryId", "==", categoryId));
-      const itemsSnapshot = await getDocs(itemsQuery);
+      // FIX: Use v8 query and get
+      const itemsQuery = db.collection("menuItems").where("categoryId", "==", categoryId);
+      const itemsSnapshot = await itemsQuery.get();
       itemsSnapshot.forEach(document => {
           batch.delete(document.ref);
       });
@@ -196,13 +210,13 @@ export const firebaseService = {
     // This query is more efficient as it filters on the server.
     // NOTE: This may require a composite index in Firestore. If orders are not appearing,
     // check the browser's developer console for a Firestore error message with a link to create the required index.
-    const q = query(
-        collection(db, "orders"), 
-        where("businessId", "==", businessId),
-        where("status", "in", [OrderStatus.PENDING, OrderStatus.IN_PREPARATION, OrderStatus.READY])
-    );
+    // FIX: Use v8 query chain
+    const q = db.collection("orders")
+        .where("businessId", "==", businessId)
+        .where("status", "in", [OrderStatus.PENDING, OrderStatus.IN_PREPARATION, OrderStatus.READY]);
 
-    const unsubscribe = onSnapshot(q, 
+    // FIX: Use v8 onSnapshot
+    const unsubscribe = q.onSnapshot(
         (querySnapshot) => {
             // No need to filter by status client-side anymore.
             const orders = querySnapshot.docs
@@ -219,10 +233,32 @@ export const firebaseService = {
 
     return unsubscribe;
   },
+
+  onAllOrdersUpdate: (businessId: string, callback: (orders: Order[]) => void): () => void => {
+    // FIX: Use v8 query chain
+    const q = db.collection("orders")
+        .where("businessId", "==", businessId);
+    
+    // FIX: Use v8 onSnapshot
+    const unsubscribe = q.onSnapshot(
+        (querySnapshot) => {
+            const orders = querySnapshot.docs
+                .map(doc => ({ id: doc.id, ...convertDocTimestamps(doc.data()) } as Order));
+            
+            callback(orders);
+        },
+        (error) => {
+            console.error("Error listening to all orders: ", error);
+        }
+    );
+
+    return unsubscribe;
+  },
   
   getOrders: async (businessId: string): Promise<Order[]> => {
-      const q = query(collection(db, "orders"), where("businessId", "==", businessId));
-      const snapshot = await getDocs(q);
+      // FIX: Use v8 query chain and get
+      const q = db.collection("orders").where("businessId", "==", businessId);
+      const snapshot = await q.get();
       return snapshot.docs.map(d => ({id: d.id, ...convertDocTimestamps(d.data())} as Order));
   },
   
@@ -230,28 +266,33 @@ export const firebaseService = {
       const orderPayload = {
           ...orderData,
           status: OrderStatus.PENDING,
-          createdAt: serverTimestamp(),
+          // FIX: Use v8 serverTimestamp
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       };
-      const docRef = await addDoc(collection(db, "orders"), orderPayload as any);
+      // FIX: Use v8 add
+      const docRef = await db.collection("orders").add(orderPayload as any);
       return { ...orderData, id: docRef.id, status: OrderStatus.PENDING, createdAt: new Date().toISOString() };
   },
 
   updateOrderStatus: (orderId: string, status: OrderStatus): Promise<void> => {
-      const docRef = doc(db, "orders", orderId);
-      return updateDoc(docRef, { status });
+      // FIX: Use v8 doc and update
+      const docRef = db.collection("orders").doc(orderId);
+      return docRef.update({ status });
   },
   
   // Admin
   getAllBusinesses: async (): Promise<Business[]> => {
-      const snapshot = await getDocs(collection(db, 'businesses'));
+      // FIX: Use v8 get
+      const snapshot = await db.collection('businesses').get();
       return snapshot.docs.map(d => ({id: d.id, ...convertDocTimestamps(d.data())} as Business));
   },
 
   getBusinessMetrics: async (businessId: string): Promise<{totalOrders: number, totalRevenue: number}> => {
-      const q = query(collection(db, "orders"),
-          where("businessId", "==", businessId),
-          where("status", "==", OrderStatus.COMPLETED));
-      const snapshot = await getDocs(q);
+      // FIX: Use v8 query chain and get
+      const q = db.collection("orders")
+          .where("businessId", "==", businessId)
+          .where("status", "==", OrderStatus.COMPLETED);
+      const snapshot = await q.get();
       const orders = snapshot.docs.map(d => d.data() as Order);
       const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
       return { totalOrders: orders.length, totalRevenue };

@@ -1,6 +1,8 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore, Timestamp } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+// FIX: Use Firebase v8 compatible imports
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -14,9 +16,14 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// FIX: Use v8 initialization, preventing re-initialization on hot-reloads.
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 
 // Initialize and export Firebase services
-export const db = getFirestore(app);
-export const auth = getAuth(app);
-export { Timestamp };
+// FIX: Use v8 service getters
+export const db = firebase.firestore();
+export const auth = firebase.auth();
+// FIX: Export Timestamp from the v8 SDK
+export const Timestamp = firebase.firestore.Timestamp;

@@ -12,25 +12,23 @@ const DashboardPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchOrders = async () => {
-            if (user?.businessId) {
-                try {
-                    const fetchedOrders = await firebaseService.getOrders(user.businessId);
-                    // Sort orders client-side to ensure most recent are first
-                    const sortedOrders = fetchedOrders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-                    setOrders(sortedOrders);
-                } catch (error) {
-                    console.error("Failed to fetch orders", error);
-                } finally {
-                    setLoading(false);
-                }
-            } else if (user && !user.businessId) {
-                // User is loaded but has no businessId, so they can't have orders.
-                setLoading(false);
-            }
-        };
-        fetchOrders();
+        if (user?.businessId) {
+            setLoading(true);
+            const unsubscribe = firebaseService.onAllOrdersUpdate(user.businessId, (updatedOrders) => {
+                // Sort orders to show recent ones first in the table
+                const sortedOrders = updatedOrders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                setOrders(sortedOrders);
+                setLoading(false); // Set loading to false once we have the initial data
+            });
+
+            // Cleanup subscription on unmount
+            return () => unsubscribe();
+        } else if (user) {
+            // User is loaded but has no businessId
+            setLoading(false);
+        }
     }, [user]);
+
 
     const completedOrders = orders.filter(o => o.status === OrderStatus.COMPLETED);
     const totalRevenue = completedOrders.reduce((acc, order) => acc + order.total, 0);
