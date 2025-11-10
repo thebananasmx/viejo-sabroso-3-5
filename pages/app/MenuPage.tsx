@@ -259,7 +259,9 @@ const MenuPage: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {items.filter(item => item.categoryId === category.id).map(item => (
                             <Card key={item.id} className="flex">
-                                <img src={item.imageUrl || 'https://via.placeholder.com/400x300'} alt={item.name} className="w-40 h-40 object-cover flex-shrink-0"/>
+                                <div className="w-40 flex-shrink-0">
+                                    <img src={item.imageUrl || 'https://via.placeholder.com/400x300'} alt={item.name} className="w-full h-full object-cover"/>
+                                </div>
                                 <div className="flex flex-col flex-grow">
                                     <div className="p-4 flex flex-col flex-grow">
                                         <h3 className="text-lg font-bold text-brand-light">{item.name}</h3>

@@ -159,7 +159,9 @@ const CustomerMenuPage: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {items.filter(item => item.categoryId === category.id).map(item => (
                                     <Card key={item.id} className="flex">
-                                        <img src={item.imageUrl} alt={item.name} className="w-32 h-32 object-cover flex-shrink-0"/>
+                                        <div className="w-32 flex-shrink-0">
+                                            <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover"/>
+                                        </div>
                                         <div className="p-4 flex flex-col flex-grow">
                                             <h3 className="text-lg font-bold text-brand-light">{item.name}</h3>
                                             <p className="text-gray-400 text-sm mt-1 flex-grow line-clamp-2">{item.description}</p>

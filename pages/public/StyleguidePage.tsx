@@ -93,7 +93,9 @@ const StyleguidePage: React.FC = () => {
                         <h3 className="text-2xl font-semibold text-brand-light mb-4">Tarjeta de Producto</h3>
                         <div className="max-w-lg">
                             <Card className="flex">
-                                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Hamburguesa Clásica" className="w-32 h-32 object-cover flex-shrink-0"/>
+                                <div className="w-32 flex-shrink-0">
+                                    <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Hamburguesa Clásica" className="w-full h-full object-cover"/>
+                                </div>
                                 <div className="p-4 flex flex-col flex-grow">
                                     <h3 className="text-lg font-bold text-brand-light">Hamburguesa Clásica</h3>
                                     <p className="text-gray-400 text-sm mt-1 flex-grow line-clamp-2">Carne de res jugosa, lechuga fresca, tomate y queso cheddar en un pan brioche. Acompañada de nuestras papas fritas caseras y una salsa especial de la casa que te encantará.</p>
