@@ -207,7 +207,7 @@ export const firebaseService = {
   },
   
   getOrders: async (businessId: string): Promise<Order[]> => {
-      const q = query(collection(db, "orders"), where("businessId", "==", businessId), orderBy("createdAt", "desc"));
+      const q = query(collection(db, "orders"), where("businessId", "==", businessId));
       const snapshot = await getDocs(q);
       return snapshot.docs.map(d => ({id: d.id, ...convertDocTimestamps(d.data())} as Order));
   },

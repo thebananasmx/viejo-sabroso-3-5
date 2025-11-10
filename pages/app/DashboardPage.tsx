@@ -16,7 +16,9 @@ const DashboardPage: React.FC = () => {
             if (user?.businessId) {
                 try {
                     const fetchedOrders = await firebaseService.getOrders(user.businessId);
-                    setOrders(fetchedOrders);
+                    // Sort orders client-side to ensure most recent are first
+                    const sortedOrders = fetchedOrders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                    setOrders(sortedOrders);
                 } catch (error) {
                     console.error("Failed to fetch orders", error);
                 } finally {
