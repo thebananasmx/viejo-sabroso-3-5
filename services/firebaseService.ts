@@ -1,5 +1,5 @@
+
 // FIX: Switched to Firebase v8 compatible imports
-import firebase from 'firebase/compat/app';
 import { db, auth, Timestamp } from '../firebaseConfig';
 import { Order, OrderStatus, Business, Category, MenuItem, User, UserRole } from '../types';
 
@@ -283,7 +283,7 @@ export const firebaseService = {
         const orderPayload = {
             ...orderData,
             status: OrderStatus.PENDING,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            createdAt: new Date().toISOString(),
             orderNumber: newOrderNumber,
         };
         transaction.set(orderDocRef, orderPayload);
