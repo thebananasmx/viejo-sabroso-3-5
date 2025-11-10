@@ -133,8 +133,14 @@ const CustomerMenuPage: React.FC = () => {
 
     return (
         <div className="container mx-auto p-4 md:p-8 pb-32 md:pb-8">
-            <h1 className="font-serif text-4xl font-bold text-center mb-2 text-brand-light">{business.name}</h1>
-            <p className="text-lg text-gray-400 text-center mb-8">Welcome! Order from your table.</p>
+            <div className="text-center mb-8">
+                {business.logoUrl ? (
+                    <img src={business.logoUrl} alt={business.name} className="h-20 md:h-24 mx-auto w-auto object-contain" />
+                ) : (
+                    <h1 className="font-serif text-4xl font-bold text-brand-light">{business.name}</h1>
+                )}
+                <p className="text-lg text-gray-400 mt-2">Welcome! Order from your table.</p>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2">
