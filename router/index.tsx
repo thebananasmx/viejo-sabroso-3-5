@@ -26,6 +26,7 @@ import SettingsPage from '../pages/app/SettingsPage'; // Import Settings page
 
 // Admin Pages
 import AdminLoginPage from '../pages/admin/AdminLoginPage';
+import AdminRegisterPage from '../pages/admin/AdminRegisterPage';
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import Spinner from '../components/ui/Spinner';
@@ -101,6 +102,7 @@ const router = createHashRouter([
     path: '/admin',
     children: [
       { path: 'login', element: <AdminLoginPage /> },
+      { path: 'register', element: <AdminRegisterPage /> },
       {
         element: <ProtectedRoute allowedRoles={[UserRole.ADMIN]} />,
         children: [

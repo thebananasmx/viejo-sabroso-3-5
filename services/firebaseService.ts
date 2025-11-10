@@ -2,7 +2,7 @@
 
 import { 
     collection, getDocs, doc, getDoc, query, where, limit, writeBatch, 
-    addDoc, updateDoc, deleteDoc, onSnapshot, orderBy, serverTimestamp 
+    addDoc, updateDoc, deleteDoc, onSnapshot, orderBy, serverTimestamp, setDoc
 } from 'firebase/firestore';
 import { 
     signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut 
@@ -76,6 +76,20 @@ export const firebaseService = {
           user: { id: user.uid, ...newUser },
           business: newBusiness
       };
+  },
+
+  registerAdmin: async (email: string, pass: string): Promise<User> => {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+    const user = userCredential.user;
+
+    const userDocRef = doc(db, 'users', user.uid);
+    const newUser: Omit<User, 'id'> = {
+      email: user.email!,
+      role: UserRole.ADMIN,
+    };
+    await setDoc(userDocRef, newUser);
+
+    return { id: user.uid, ...newUser };
   },
 
   logout: (): Promise<void> => signOut(auth),

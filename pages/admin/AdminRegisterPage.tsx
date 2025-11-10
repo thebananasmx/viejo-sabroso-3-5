@@ -4,10 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import { useAuth } from '../../hooks/useAuth';
-import { UserRole } from '../../types';
 import { useToast } from '../../hooks/useToast';
 
-const AdminLoginPage: React.FC = () => {
+const AdminRegisterPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,13 +18,14 @@ const AdminLoginPage: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const user = await auth.login(email, password);
-      if (user.role !== UserRole.ADMIN) {
-        throw new Error("Acceso denegado. No es un usuario administrador.");
+      if (!auth.registerAdmin) {
+        throw new Error("La función de registro de administrador no está disponible.");
       }
+      await auth.registerAdmin(email, password);
       navigate('/admin/dashboard');
+      addToast('¡Cuenta de administrador creada!', 'success');
     } catch (err: any) {
-      addToast(err.message || 'Error al iniciar sesión.', 'error');
+      addToast(err.message || 'Error al registrar.', 'error');
     } finally {
       setLoading(false);
     }
@@ -35,12 +35,12 @@ const AdminLoginPage: React.FC = () => {
     <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-light">
-          Portal de Administrador
+          Registrar Nuevo Administrador
         </h2>
         <p className="mt-2 text-center text-sm text-gray-400">
-          O{' '}
-          <Link to="/admin/register" className="font-medium text-brand-primary hover:opacity-80">
-            crea una nueva cuenta
+          ¿Ya tienes una cuenta?{' '}
+          <Link to="/admin/login" className="font-medium text-brand-primary hover:opacity-80">
+            Inicia sesión
           </Link>
         </p>
       </div>
@@ -61,7 +61,7 @@ const AdminLoginPage: React.FC = () => {
               id="password"
               label="Contraseña"
               type="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -69,7 +69,7 @@ const AdminLoginPage: React.FC = () => {
             
             <div>
               <Button type="submit" className="w-full flex justify-center" disabled={loading}>
-                {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+                {loading ? 'Creando cuenta...' : 'Crear Cuenta de Admin'}
               </Button>
             </div>
           </form>
@@ -79,4 +79,4 @@ const AdminLoginPage: React.FC = () => {
   );
 };
 
-export default AdminLoginPage;
+export default AdminRegisterPage;

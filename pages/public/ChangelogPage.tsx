@@ -12,6 +12,41 @@ const ChangelogPage: React.FC = () => {
           </p>
 
           <div className="space-y-12">
+            {/* Version 3.5.1 */}
+            <article>
+              <div className="flex items-center space-x-4 mb-4">
+                <h2 className="font-serif text-4xl font-bold text-brand-light">Versión 3.5.1</h2>
+                <span className="bg-blue-500 text-white font-bold text-sm px-3 py-1 rounded-full">
+                  Mejoras
+                </span>
+              </div>
+              <p className="text-gray-500 text-sm mb-6">26 de Julio de 2024</p>
+
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-2xl font-semibold text-brand-primary mb-3">🚀 Nuevas Características</h3>
+                  <ul className="list-disc list-inside space-y-2 text-brand-light">
+                    <li><strong>Internacionalización:</strong> Se cambió el nombre de "Tablero" a "Dashboard" en toda la aplicación para una mayor coherencia.</li>
+                    <li><strong>Páginas Públicas:</strong> Se agregaron las páginas "Style Guide" y "Change Log" para mejorar la documentación y la transparencia del producto, accesibles desde el pie de página.</li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="text-2xl font-semibold text-brand-primary mb-3">✨ Mejoras</h3>
+                  <ul className="list-disc list-inside space-y-2 text-brand-light">
+                    <li><strong>Diseño de Tarjeta de Producto:</strong> Se rediseñó la tarjeta de producto a un formato horizontal, con la imagen en formato cuadrado a la izquierda y los detalles a la derecha para una mejor legibilidad.</li>
+                    <li><strong>Consistencia en la Interfaz:</strong> La descripción del producto ahora se limita a dos líneas, truncando el texto más largo con "..." para garantizar una altura de tarjeta uniforme en todo el menú.</li>
+                    <li><strong>Visualización de Imágenes:</strong> Se mejoró la visualización de las imágenes del producto para que cubran completamente su contenedor (`object-cover`), evitando espacios en blanco y recortes.</li>
+                  </ul>
+                </div>
+
+                 <div>
+                  <h3 className="text-2xl font-semibold text-brand-primary mb-3">🐛 Correcciones de Errores</h3>
+                   <p className="text-brand-light">Se corrigió un problema visual donde las imágenes de los productos no se ajustaban correctamente a la altura de la tarjeta, causando inconsistencias en el diseño.</p>
+                </div>
+              </div>
+            </article>
+            
             {/* Version 3.5.0 */}
             <article>
               <div className="flex items-center space-x-4 mb-4">

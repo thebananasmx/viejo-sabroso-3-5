@@ -10,6 +10,7 @@ interface AuthContextType {
   login: (email: string, pass: string) => Promise<User>;
   logout: () => Promise<void>;
   register: (businessName: string, email: string, pass: string) => Promise<{user: User}>;
+  registerAdmin: (email: string, pass: string) => Promise<User>;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -48,12 +49,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return { user: registeredUser };
   };
 
+  const registerAdmin = async (email: string, pass: string) => {
+    const registeredUser = await firebaseService.registerAdmin(email, pass);
+    setUser(registeredUser);
+    return registeredUser;
+  };
+
   const logout = async () => {
     await firebaseService.logout();
     setUser(null);
   };
 
-  const value = { user, loading, login, logout, register };
+  const value = { user, loading, login, logout, register, registerAdmin };
 
   return (
     <AuthContext.Provider value={value}>
