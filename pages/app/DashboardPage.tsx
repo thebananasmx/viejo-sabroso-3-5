@@ -54,11 +54,11 @@ const DashboardPage: React.FC = () => {
 
         let name = '';
         if (i === 0) {
-            name = 'Today';
+            name = 'Hoy';
         } else if (i === 1) {
-            name = 'Yesterday';
+            name = 'Ayer';
         } else {
-            name = date.toLocaleDateString('en-US', { weekday: 'short' });
+            name = date.toLocaleDateString('es-MX', { weekday: 'short' });
         }
 
         salesData.push({
@@ -75,20 +75,20 @@ const DashboardPage: React.FC = () => {
 
     return (
         <div>
-            <h1 className="text-3xl font-bold text-brand-light mb-6">Dashboard</h1>
+            <h1 className="text-3xl font-bold text-brand-light mb-6">Tablero</h1>
             
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <Card className="p-6">
-                    <h3 className="text-lg font-medium text-gray-400">Total Revenue</h3>
+                    <h3 className="text-lg font-medium text-gray-400">Ingresos Totales</h3>
                     <p className="mt-2 text-3xl font-bold text-brand-light">${totalRevenue.toFixed(2)}</p>
                 </Card>
                 <Card className="p-6">
-                    <h3 className="text-lg font-medium text-gray-400">Total Orders</h3>
+                    <h3 className="text-lg font-medium text-gray-400">Pedidos Totales</h3>
                     <p className="mt-2 text-3xl font-bold text-brand-light">{totalOrders}</p>
                 </Card>
                 <Card className="p-6">
-                    <h3 className="text-lg font-medium text-gray-400">Pending Orders</h3>
+                    <h3 className="text-lg font-medium text-gray-400">Pedidos Pendientes</h3>
                     <p className="mt-2 text-3xl font-bold text-brand-primary">{pendingOrders}</p>
                 </Card>
             </div>
@@ -96,7 +96,7 @@ const DashboardPage: React.FC = () => {
             {/* Charts */}
             <div className="grid grid-cols-1 gap-8">
                 <Card className="p-6">
-                    <h3 className="text-xl font-bold mb-4 text-brand-light">Sales Overview</h3>
+                    <h3 className="text-xl font-bold mb-4 text-brand-light">Resumen de Ventas</h3>
                     <div style={{ width: '100%', height: 300 }}>
                         <ResponsiveContainer>
                             <BarChart data={salesData}>
@@ -105,7 +105,7 @@ const DashboardPage: React.FC = () => {
                                 <YAxis stroke="#9ca3af" />
                                 <Tooltip contentStyle={{ backgroundColor: '#112b26', border: '1px solid #374151' }} />
                                 <Legend />
-                                <Bar dataKey="sales" fill="#D4FF4F" />
+                                <Bar dataKey="sales" fill="#D4FF4F" name="Ventas" />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -114,14 +114,14 @@ const DashboardPage: React.FC = () => {
 
             {/* Recent Orders Table */}
             <div className="mt-8">
-                <h3 className="text-xl font-bold mb-4 text-brand-light">Recent Orders</h3>
+                <h3 className="text-xl font-bold mb-4 text-brand-light">Pedidos Recientes</h3>
                 <Card className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-700">
                         <thead className="bg-brand-dark-accent/50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Order ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Table</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID de Pedido</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Mesa</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Estado</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Total</th>
                             </tr>
                         </thead>

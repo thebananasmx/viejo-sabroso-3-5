@@ -26,9 +26,9 @@ const RegisterPage: React.FC = () => {
       await auth.register(businessName, email, password);
       setRegisteredSlug(businessName.toLowerCase().replace(/\s+/g, '-'));
       setStep(2);
-      addToast('Registration successful!', 'success');
+      addToast('¡Registro exitoso!', 'success');
     } catch (err: any) {
-      addToast(err.message || 'Failed to register.', 'error');
+      addToast(err.message || 'Error al registrar.', 'error');
     } finally {
       setLoading(false);
     }
@@ -40,13 +40,13 @@ const RegisterPage: React.FC = () => {
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-brand-dark-accent py-8 px-4 shadow-xl sm:rounded-lg sm:px-10 text-center border border-gray-800">
                     <CheckCircleIcon className="mx-auto h-12 w-12 text-green-500"/>
-                    <h2 className="mt-4 text-2xl font-bold text-brand-light">Registration Successful!</h2>
-                    <p className="mt-2 text-gray-400">Your business is ready. Here is your unique QR code.</p>
+                    <h2 className="mt-4 text-2xl font-bold text-brand-light">¡Registro Exitoso!</h2>
+                    <p className="mt-2 text-gray-400">Tu negocio está listo. Aquí está tu código QR único.</p>
                     <div className="mt-8">
                         <QRCodeGenerator slug={registeredSlug} />
                     </div>
                     <Button onClick={() => navigate('/app/dashboard')} className="mt-8 w-full">
-                        Go to Dashboard
+                        Ir al Tablero
                     </Button>
                 </div>
             </div>
@@ -58,12 +58,12 @@ const RegisterPage: React.FC = () => {
     <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-light">
-          Create your business account
+          Crea tu cuenta de negocio
         </h2>
         <p className="mt-2 text-center text-sm text-gray-400">
-          Already have an account?{' '}
+          ¿Ya tienes una cuenta?{' '}
           <Link to="/app/login" className="font-medium text-brand-primary hover:opacity-80">
-            Sign in
+            Inicia sesión
           </Link>
         </p>
       </div>
@@ -73,7 +73,7 @@ const RegisterPage: React.FC = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <Input
               id="businessName"
-              label="Business Name"
+              label="Nombre del Negocio"
               type="text"
               required
               value={businessName}
@@ -81,7 +81,7 @@ const RegisterPage: React.FC = () => {
             />
             <Input
               id="email"
-              label="Email address"
+              label="Correo electrónico"
               type="email"
               autoComplete="email"
               required
@@ -90,7 +90,7 @@ const RegisterPage: React.FC = () => {
             />
             <Input
               id="password"
-              label="Password"
+              label="Contraseña"
               type="password"
               autoComplete="new-password"
               required
@@ -100,7 +100,7 @@ const RegisterPage: React.FC = () => {
             
             <div>
               <Button type="submit" className="w-full flex justify-center" disabled={loading}>
-                {loading ? 'Creating account...' : 'Create Account'}
+                {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
               </Button>
             </div>
           </form>

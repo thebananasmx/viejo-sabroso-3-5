@@ -13,7 +13,7 @@ const PublicLayout: React.FC = () => {
     <div className="min-h-screen flex flex-col">
       {isBannerVisible && (
         <div className="relative text-center py-2 px-4 sm:px-6 lg:px-8 text-sm bg-gradient-to-r from-yellow-300 via-brand-primary to-pink-300 text-brand-dark font-medium">
-          <p>Spots is launching soon. Click to learn more.</p>
+          <p>Spots se lanzará pronto. Haz clic para saber más.</p>
           <button onClick={() => setIsBannerVisible(false)} className="absolute top-1/2 right-4 -translate-y-1/2 text-brand-dark">
             <XIcon className="h-5 w-5" />
           </button>
@@ -28,10 +28,10 @@ const PublicLayout: React.FC = () => {
               </Link>
               <div className="flex items-center space-x-6">
                 <Link to="/app/login" className="text-gray-300 hover:text-brand-primary font-medium">
-                  Log In
+                  Iniciar Sesión
                 </Link>
                 <Link to="/app/register">
-                  <Button>Get Started</Button>
+                  <Button>Comenzar</Button>
                 </Link>
               </div>
             </div>
@@ -43,10 +43,10 @@ const PublicLayout: React.FC = () => {
       </main>
       <footer className="bg-brand-dark border-t border-gray-800">
         <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center text-gray-500">
-          <p>&copy; {new Date().getFullYear()} Viejo Sabroso. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Viejo Sabroso. Todos los derechos reservados.</p>
           <div className="mt-4">
             <Link to="/styleguide" className="text-sm text-gray-600 hover:text-brand-primary">
-              Styleguide
+              Guía de Estilos
             </Link>
           </div>
         </div>

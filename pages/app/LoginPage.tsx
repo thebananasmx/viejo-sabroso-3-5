@@ -21,7 +21,7 @@ const LoginPage: React.FC = () => {
       await auth.login(email, password);
       navigate('/app/dashboard');
     } catch (err: any) {
-      addToast(err.message || 'Failed to log in.', 'error');
+      addToast(err.message || 'Error al iniciar sesión.', 'error');
     } finally {
       setLoading(false);
     }
@@ -31,12 +31,12 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-light">
-          Sign in to your account
+          Inicia sesión en tu cuenta
         </h2>
         <p className="mt-2 text-center text-sm text-gray-400">
-          Or{' '}
+          O{' '}
           <Link to="/app/register" className="font-medium text-brand-primary hover:opacity-80">
-            create a new business account
+            crea una nueva cuenta de negocio
           </Link>
         </p>
       </div>
@@ -46,7 +46,7 @@ const LoginPage: React.FC = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <Input
               id="email"
-              label="Email address"
+              label="Correo electrónico"
               type="email"
               autoComplete="email"
               required
@@ -55,7 +55,7 @@ const LoginPage: React.FC = () => {
             />
             <Input
               id="password"
-              label="Password"
+              label="Contraseña"
               type="password"
               autoComplete="current-password"
               required
@@ -65,7 +65,7 @@ const LoginPage: React.FC = () => {
             
             <div>
               <Button type="submit" className="w-full flex justify-center" disabled={loading}>
-                {loading ? 'Signing in...' : 'Sign in'}
+                {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
               </Button>
             </div>
           </form>

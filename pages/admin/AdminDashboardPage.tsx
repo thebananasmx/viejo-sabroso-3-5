@@ -45,17 +45,17 @@ const AdminDashboardPage: React.FC = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-brand-light mb-6">Registered Businesses</h1>
+      <h1 className="text-3xl font-bold text-brand-light mb-6">Negocios Registrados</h1>
       <Card>
         <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-700">
             <thead className="bg-brand-dark-accent/50">
                 <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Business Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Nombre del Negocio</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Slug</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Registered On</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Total Orders</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Total Revenue</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Fecha de Registro</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Pedidos Totales</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Ingresos Totales</th>
                 </tr>
             </thead>
             <tbody className="bg-brand-dark-accent divide-y divide-gray-700">

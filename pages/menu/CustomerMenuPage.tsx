@@ -37,7 +37,7 @@ const CustomerMenuPage: React.FC = () => {
                 }
             } catch (error) {
                 console.error("Failed to fetch menu", error);
-                addToast('Failed to load menu.', 'error');
+                addToast('Error al cargar el menú.', 'error');
             } finally {
                 setLoading(false);
             }
@@ -55,7 +55,7 @@ const CustomerMenuPage: React.FC = () => {
             }
             return [...prevCart, { menuItemId: item.id, name: item.name, quantity: 1, price: item.price }];
         });
-        addToast(`${item.name} added to cart!`, 'success');
+        addToast(`¡${item.name} añadido al carrito!`, 'success');
     };
 
     const cartTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -76,7 +76,7 @@ const CustomerMenuPage: React.FC = () => {
             setIsCartModalOpen(false);
         } catch(error) {
             console.error("Failed to place order", error);
-            addToast("There was an error placing your order. Please try again.", 'error');
+            addToast("Hubo un error al realizar tu pedido. Por favor, inténtalo de nuevo.", 'error');
         } finally {
             setIsPlacingOrder(false);
         }
@@ -95,12 +95,12 @@ const CustomerMenuPage: React.FC = () => {
         </div>
     );
 
-    if (!business) return <div className="text-center p-10">Menu not found.</div>;
+    if (!business) return <div className="text-center p-10">Menú no encontrado.</div>;
 
     const CartContent = () => (
         <>
             {cart.length === 0 ? (
-                <p className="text-gray-400">Your cart is empty.</p>
+                <p className="text-gray-400">Tu carrito está vacío.</p>
             ) : (
                 <>
                     <div className="space-y-2 mb-4 max-h-64 overflow-y-auto">
@@ -120,7 +120,7 @@ const CustomerMenuPage: React.FC = () => {
                             type="text"
                             inputMode="numeric"
                             pattern="[0-9]*"
-                            placeholder="Your Table Number"
+                            placeholder="Tu Número de Mesa"
                             value={tableNumber}
                             onChange={handleTableNumberChange}
                             className="w-full px-4 py-2.5 bg-brand-dark-accent border border-gray-700 rounded-lg shadow-sm text-brand-light placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent sm:text-sm"
@@ -131,7 +131,7 @@ const CustomerMenuPage: React.FC = () => {
                         onClick={handlePlaceOrder}
                         disabled={!tableNumber || cart.length === 0 || isPlacingOrder}
                     >
-                        {isPlacingOrder ? 'Placing Order...' : 'Place Order'}
+                        {isPlacingOrder ? 'Realizando Pedido...' : 'Realizar Pedido'}
                     </Button>
                 </>
             )}
@@ -148,7 +148,7 @@ const CustomerMenuPage: React.FC = () => {
                 ) : (
                     <h1 className="font-serif text-4xl font-bold text-brand-light">{business.name}</h1>
                 )}
-                <p className="text-lg text-gray-400 mt-2">Welcome! Order from your table.</p>
+                <p className="text-lg text-gray-400 mt-2">¡Bienvenido! Ordena desde tu mesa.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -165,7 +165,7 @@ const CustomerMenuPage: React.FC = () => {
                                             <p className="text-gray-400 text-sm mt-1 flex-grow">{item.description}</p>
                                             <div className="flex justify-between items-center mt-4">
                                                 <p className="text-brand-primary font-bold text-lg">${item.price.toFixed(2)}</p>
-                                                <Button size="sm" onClick={() => addToCart(item)}>Add</Button>
+                                                <Button size="sm" onClick={() => addToCart(item)}>Añadir</Button>
                                             </div>
                                         </div>
                                     </Card>
@@ -178,7 +178,7 @@ const CustomerMenuPage: React.FC = () => {
                 <div className="md:col-span-1">
                     <div className="hidden md:block sticky top-24">
                         <Card className="p-6">
-                             <h2 className="text-xl font-bold mb-4 text-brand-light">Your Order</h2>
+                             <h2 className="text-xl font-bold mb-4 text-brand-light">Tu Pedido</h2>
                             <CartContent />
                         </Card>
                     </div>
@@ -190,24 +190,24 @@ const CustomerMenuPage: React.FC = () => {
                      <Button className="w-full shadow-lg" size="lg" onClick={() => setIsCartModalOpen(true)}>
                         <div className="flex justify-between items-center w-full px-2">
                             <span className="bg-brand-primary text-brand-dark font-bold rounded-full h-7 w-7 flex items-center justify-center text-sm">{cartItemCount}</span>
-                            <span className="font-bold text-base text-brand-dark">View Order</span>
+                            <span className="font-bold text-base text-brand-dark">Ver Pedido</span>
                             <span className="font-semibold text-base text-brand-dark">${cartTotal.toFixed(2)}</span>
                         </div>
                      </Button>
                 </div>
             )}
 
-            <Modal isOpen={isCartModalOpen} onClose={() => setIsCartModalOpen(false)} title="Your Order">
+            <Modal isOpen={isCartModalOpen} onClose={() => setIsCartModalOpen(false)} title="Tu Pedido">
                 <CartContent />
             </Modal>
             
-            <Modal isOpen={isOrderPlaced} onClose={() => setIsOrderPlaced(false)} title="Order Placed!">
+            <Modal isOpen={isOrderPlaced} onClose={() => setIsOrderPlaced(false)} title="¡Pedido Realizado!">
                 <div className="text-center">
                     <CheckCircleIcon className="mx-auto h-16 w-16 text-green-500 mb-4"/>
                     <p className="text-lg text-gray-300">
-                        Your order has been sent to the kitchen. It will be with you shortly!
+                        Tu pedido ha sido enviado a la cocina. ¡Estará contigo en breve!
                     </p>
-                    <Button className="mt-6" onClick={() => setIsOrderPlaced(false)}>Close</Button>
+                    <Button className="mt-6" onClick={() => setIsOrderPlaced(false)}>Cerrar</Button>
                 </div>
             </Modal>
         </div>

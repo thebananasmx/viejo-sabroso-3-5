@@ -21,11 +21,11 @@ const AdminLoginPage: React.FC = () => {
     try {
       const user = await auth.login(email, password);
       if (user.role !== UserRole.ADMIN) {
-        throw new Error("Access denied. Not an admin user.");
+        throw new Error("Acceso denegado. No es un usuario administrador.");
       }
       navigate('/admin/dashboard');
     } catch (err: any) {
-      addToast(err.message || 'Failed to log in.', 'error');
+      addToast(err.message || 'Error al iniciar sesión.', 'error');
     } finally {
       setLoading(false);
     }
@@ -35,7 +35,7 @@ const AdminLoginPage: React.FC = () => {
     <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-light">
-          Admin Portal
+          Portal de Administrador
         </h2>
       </div>
 
@@ -44,7 +44,7 @@ const AdminLoginPage: React.FC = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <Input
               id="email"
-              label="Email address"
+              label="Correo electrónico"
               type="email"
               autoComplete="email"
               required
@@ -53,7 +53,7 @@ const AdminLoginPage: React.FC = () => {
             />
             <Input
               id="password"
-              label="Password"
+              label="Contraseña"
               type="password"
               autoComplete="current-password"
               required
@@ -63,7 +63,7 @@ const AdminLoginPage: React.FC = () => {
             
             <div>
               <Button type="submit" className="w-full flex justify-center" disabled={loading}>
-                {loading ? 'Signing in...' : 'Sign in'}
+                {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
               </Button>
             </div>
           </form>

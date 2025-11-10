@@ -36,11 +36,11 @@ export interface MenuItem {
 }
 
 export enum OrderStatus {
-  PENDING = 'PENDING',
-  IN_PREPARATION = 'IN_PREPARATION',
-  READY = 'READY',
-  COMPLETED = 'COMPLETED',
-  CANCELED = 'CANCELED',
+  PENDING = 'PENDIENTE',
+  IN_PREPARATION = 'EN PREPARACIÓN',
+  READY = 'LISTO',
+  COMPLETED = 'COMPLETADO',
+  CANCELED = 'CANCELADO',
 }
 
 export interface OrderItem {

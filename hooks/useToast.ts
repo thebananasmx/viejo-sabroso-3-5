@@ -6,7 +6,7 @@ export const useToast = () => {
   const context = useContext(ToastContext);
   if (!context) {
     // Fix: Corrected error message to refer to ToastProvider.
-    throw new Error('useToast must be used within a ToastProvider');
+    throw new Error('useToast debe ser usado dentro de un ToastProvider');
   }
   return context;
 };

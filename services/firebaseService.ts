@@ -30,7 +30,7 @@ export const firebaseService = {
     const userDoc = await getDoc(userDocRef);
 
     if (!userDoc.exists()) {
-      throw new Error("User data not found in Firestore.");
+      throw new Error("Datos del usuario no encontrados en Firestore.");
     }
     // FIX: Spread types may only be created from object types. Using Object.assign for robustness.
     return Object.assign({ id: userDoc.id }, userDoc.data()) as User;
@@ -43,7 +43,7 @@ export const firebaseService = {
       const q = query(businessesRef, where("slug", "==", slug), limit(1));
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
-          throw new Error('Business name already taken.');
+          throw new Error('El nombre del negocio ya está en uso.');
       }
       
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);

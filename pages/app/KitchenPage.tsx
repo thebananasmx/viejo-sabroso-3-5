@@ -10,11 +10,11 @@ import { useToast } from '../../hooks/useToast';
 import Spinner from '../../components/ui/Spinner';
 
 const statusConfig = {
-    [OrderStatus.PENDING]: { title: "New Orders", color: "bg-yellow-500", next: OrderStatus.IN_PREPARATION, nextText: "Start Preparing" },
-    [OrderStatus.IN_PREPARATION]: { title: "In Preparation", color: "bg-blue-500", next: OrderStatus.READY, nextText: "Mark as Ready" },
-    [OrderStatus.READY]: { title: "Ready for Pickup", color: "bg-green-500", next: OrderStatus.COMPLETED, nextText: "Complete Order" },
-    [OrderStatus.COMPLETED]: { title: "Completed", color: "bg-gray-500", next: null, nextText: null },
-    [OrderStatus.CANCELED]: { title: "Canceled", color: "bg-red-500", next: null, nextText: null },
+    [OrderStatus.PENDING]: { title: "Nuevos Pedidos", color: "bg-yellow-500", next: OrderStatus.IN_PREPARATION, nextText: "Empezar a Preparar" },
+    [OrderStatus.IN_PREPARATION]: { title: "En Preparación", color: "bg-blue-500", next: OrderStatus.READY, nextText: "Marcar como Listo" },
+    [OrderStatus.READY]: { title: "Listo para Recoger", color: "bg-green-500", next: OrderStatus.COMPLETED, nextText: "Completar Pedido" },
+    [OrderStatus.COMPLETED]: { title: "Completado", color: "bg-gray-500", next: null, nextText: null },
+    [OrderStatus.CANCELED]: { title: "Cancelado", color: "bg-red-500", next: null, nextText: null },
 };
 
 const KitchenPage: React.FC = () => {
@@ -44,7 +44,7 @@ const KitchenPage: React.FC = () => {
             // Firestore's onSnapshot will handle the UI update automatically
         } catch (error) {
             console.error("Failed to update order status", error);
-            addToast("Failed to update order status.", 'error');
+            addToast("Error al actualizar el estado del pedido.", 'error');
         }
     };
     
@@ -59,7 +59,7 @@ const KitchenPage: React.FC = () => {
     return (
         <div className="h-[calc(100vh-4rem)] bg-gray-900 flex flex-col">
             <div className="p-4">
-                <h1 className="text-3xl font-bold text-brand-light">Kitchen Display</h1>
+                <h1 className="text-3xl font-bold text-brand-light">Pantalla de Cocina</h1>
             </div>
             <div className="flex-1 overflow-x-auto p-4">
                 <div className="flex space-x-4 min-w-max h-full">
@@ -75,7 +75,7 @@ const KitchenPage: React.FC = () => {
                                 {orders.filter(o => o.status === status).map(order => (
                                     <Card key={order.id} className="p-4">
                                         <div className="flex justify-between items-center">
-                                            <h3 className="font-bold text-lg text-brand-light">Table {order.tableNumber}</h3>
+                                            <h3 className="font-bold text-lg text-brand-light">Mesa {order.tableNumber}</h3>
                                             <p className="text-sm text-gray-400">#{order.id.slice(-4)}</p>
                                         </div>
                                         <ul className="mt-2 space-y-1 border-t border-gray-700 pt-2">

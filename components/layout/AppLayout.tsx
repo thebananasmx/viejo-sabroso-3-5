@@ -29,10 +29,10 @@ const AppLayout: React.FC = () => {
     };
 
     const navItems = [
-        { name: 'Dashboard', to: '/app/dashboard', icon: <DashboardIcon className="h-6 w-6" /> },
-        { name: 'Menu', to: '/app/menu', icon: <MenuBoardIcon className="h-6 w-6" /> },
-        { name: 'Kitchen', to: '/app/kitchen', icon: <KitchenIcon className="h-6 w-6" /> },
-        { name: 'Settings', to: '/app/settings', icon: <SettingsIcon className="h-6 w-6" /> },
+        { name: 'Tablero', to: '/app/dashboard', icon: <DashboardIcon className="h-6 w-6" /> },
+        { name: 'Menú', to: '/app/menu', icon: <MenuBoardIcon className="h-6 w-6" /> },
+        { name: 'Cocina', to: '/app/kitchen', icon: <KitchenIcon className="h-6 w-6" /> },
+        { name: 'Configuración', to: '/app/settings', icon: <SettingsIcon className="h-6 w-6" /> },
     ];
     
     const sidebarContent = (
@@ -68,10 +68,10 @@ const AppLayout: React.FC = () => {
               className="flex items-center w-full px-2 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-brand-dark-accent hover:text-white"
           >
               <LogoutIcon className="h-6 w-6" />
-              <span className="ml-3">Logout</span>
+              <span className="ml-3">Cerrar Sesión</span>
           </button>
            <p className="mt-4 text-center text-xs text-gray-500">
-            Powered by Viejo Sabroso
+            Desarrollado por Viejo Sabroso
           </p>
         </div>
       </div>

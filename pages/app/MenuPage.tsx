@@ -79,7 +79,7 @@ const MenuPage: React.FC = () => {
                 setItems(menuData.items);
             } catch (error) {
                 console.error("Failed to fetch menu", error);
-                addToast('Failed to load menu.', 'error');
+                addToast('Error al cargar el menú.', 'error');
             } finally {
                 setLoading(false);
             }
@@ -118,7 +118,7 @@ const MenuPage: React.FC = () => {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!currentItem || !user?.businessId || !currentItem.categoryId) {
-            addToast("Please fill all fields, including category.", 'error');
+            addToast("Por favor, llena todos los campos, incluida la categoría.", 'error');
             return;
         };
         setIsSaving(true);
@@ -137,31 +137,31 @@ const MenuPage: React.FC = () => {
             
             if (itemToSave.id) {
                 await firebaseService.updateMenuItem(itemToSave as MenuItem);
-                addToast('Item updated successfully!', 'success');
+                addToast('¡Platillo actualizado con éxito!', 'success');
             } else {
                 await firebaseService.addMenuItem(itemToSave);
-                addToast('Item added successfully!', 'success');
+                addToast('¡Platillo añadido con éxito!', 'success');
             }
             
             await fetchMenu(); // Refetch all menu data to show updates
             closeModal();
         } catch (error) {
             console.error("Failed to save menu item", error);
-            addToast("Failed to save item. Please try again.", 'error');
+            addToast("Error al guardar el platillo. Por favor, inténtalo de nuevo.", 'error');
         } finally {
             setIsSaving(false);
         }
     };
 
     const handleDelete = async (itemId: string) => {
-        if (window.confirm('Are you sure you want to delete this item?')) {
+        if (window.confirm('¿Estás seguro de que quieres eliminar este platillo?')) {
             try {
                 await firebaseService.deleteMenuItem(itemId);
                 setItems(items.filter(i => i.id !== itemId));
-                addToast('Item deleted successfully.', 'success');
+                addToast('Platillo eliminado con éxito.', 'success');
             } catch (error) {
                 console.error("Failed to delete menu item", error);
-                addToast("Failed to delete item. Please try again.", 'error');
+                addToast("Error al eliminar el platillo. Por favor, inténtalo de nuevo.", 'error');
             }
         }
     };
@@ -169,7 +169,7 @@ const MenuPage: React.FC = () => {
     const handleSaveCategory = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!currentCategory?.name || !user?.businessId) {
-            addToast("Category name cannot be empty.", 'error');
+            addToast("El nombre de la categoría no puede estar vacío.", 'error');
             return;
         }
         setIsSavingCategory(true);
@@ -182,30 +182,30 @@ const MenuPage: React.FC = () => {
 
             if (categoryToSave.id) {
                 await firebaseService.updateCategory(categoryToSave as Category);
-                addToast('Category updated successfully!', 'success');
+                addToast('¡Categoría actualizada con éxito!', 'success');
             } else {
                 await firebaseService.addCategory({ name: categoryToSave.name, businessId: categoryToSave.businessId });
-                addToast('Category added successfully!', 'success');
+                addToast('¡Categoría añadida con éxito!', 'success');
             }
             await fetchMenu();
             closeCategoryModal();
         } catch (error) {
             console.error("Failed to save category", error);
-            addToast("Failed to save category.", 'error');
+            addToast("Error al guardar la categoría.", 'error');
         } finally {
             setIsSavingCategory(false);
         }
     };
 
     const handleDeleteCategory = async (categoryId: string) => {
-        if (window.confirm('Are you sure you want to delete this category? This will also delete all items within it.')) {
+        if (window.confirm('¿Estás seguro de que quieres eliminar esta categoría? Esto también eliminará todos los platillos que contiene.')) {
             try {
                 await firebaseService.deleteCategory(categoryId);
-                addToast('Category and its items deleted successfully.', 'success');
+                addToast('Categoría y sus platillos eliminados con éxito.', 'success');
                 await fetchMenu(); // Re-fetch everything
             } catch (error) {
                 console.error("Failed to delete category", error);
-                addToast("Failed to delete category.", 'error');
+                addToast("Error al eliminar la categoría.", 'error');
             }
         }
     };
@@ -219,21 +219,21 @@ const MenuPage: React.FC = () => {
     return (
         <div>
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold text-brand-light">Menu</h1>
+                <h1 className="text-3xl font-bold text-brand-light">Menú</h1>
                 <Button onClick={() => openModal()} className="flex items-center" disabled={categories.length === 0}>
-                    <PlusIcon className="h-5 w-5 mr-2" /> Add Item
+                    <PlusIcon className="h-5 w-5 mr-2" /> Añadir Platillo
                 </Button>
             </div>
 
             <Card className="p-6 mb-8">
                 <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-semibold text-brand-light">Categories</h2>
+                    <h2 className="text-2xl font-semibold text-brand-light">Categorías</h2>
                     <Button onClick={() => openCategoryModal()} size="sm" className="flex items-center">
-                        <PlusIcon className="h-4 w-4 mr-2" /> New Category
+                        <PlusIcon className="h-4 w-4 mr-2" /> Nueva Categoría
                     </Button>
                 </div>
                 {categories.length === 0 ? (
-                    <p className="mt-4 text-gray-400">You haven't added any categories yet. Click "New Category" to start.</p>
+                    <p className="mt-4 text-gray-400">Aún no has añadido categorías. Haz clic en "Nueva Categoría" para empezar.</p>
                 ) : (
                     <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                         {categories.map(category => (
@@ -279,17 +279,17 @@ const MenuPage: React.FC = () => {
                 </div>
             ))}
 
-            <Modal isOpen={isModalOpen} onClose={closeModal} title={currentItem?.id ? 'Edit Menu Item' : 'Add Menu Item'}>
+            <Modal isOpen={isModalOpen} onClose={closeModal} title={currentItem?.id ? 'Editar Platillo' : 'Añadir Platillo'}>
                 <form onSubmit={handleSave} className="space-y-4">
-                    <Input label="Name" value={currentItem?.name || ''} onChange={e => setCurrentItem({...currentItem, name: e.target.value})} required/>
-                    <Input label="Description" value={currentItem?.description || ''} onChange={e => setCurrentItem({...currentItem, description: e.target.value})} required/>
-                    <Input label="Price" type="number" step="0.01" value={currentItem?.price || ''} onChange={e => setCurrentItem({...currentItem, price: parseFloat(e.target.value)})} required/>
+                    <Input label="Nombre" value={currentItem?.name || ''} onChange={e => setCurrentItem({...currentItem, name: e.target.value})} required/>
+                    <Input label="Descripción" value={currentItem?.description || ''} onChange={e => setCurrentItem({...currentItem, description: e.target.value})} required/>
+                    <Input label="Precio" type="number" step="0.01" value={currentItem?.price || ''} onChange={e => setCurrentItem({...currentItem, price: parseFloat(e.target.value)})} required/>
                     <div>
-                        <label htmlFor="image" className="block text-sm font-medium text-gray-300 mb-1">Image</label>
+                        <label htmlFor="image" className="block text-sm font-medium text-gray-300 mb-1">Imagen</label>
                         <input type="file" id="image" accept="image/*" onChange={(e) => setImageFile(e.target.files ? e.target.files[0] : null)} className="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20"/>
                     </div>
                     <div>
-                        <label htmlFor="category" className="block text-sm font-medium text-gray-300 mb-1">Category</label>
+                        <label htmlFor="category" className="block text-sm font-medium text-gray-300 mb-1">Categoría</label>
                         <select
                             id="category"
                             value={currentItem?.categoryId || ''}
@@ -297,29 +297,29 @@ const MenuPage: React.FC = () => {
                             required
                             className="w-full px-3 py-2 bg-brand-dark-accent border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm"
                         >
-                             <option value="" disabled>Select a category</option>
+                             <option value="" disabled>Selecciona una categoría</option>
                             {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                         </select>
                     </div>
                     <div className="flex justify-end space-x-2 pt-4">
-                        <Button variant="ghost" type="button" onClick={closeModal} disabled={isSaving}>Cancel</Button>
-                        <Button type="submit" disabled={isSaving}>{isSaving ? 'Saving...' : 'Save Item'}</Button>
+                        <Button variant="ghost" type="button" onClick={closeModal} disabled={isSaving}>Cancelar</Button>
+                        <Button type="submit" disabled={isSaving}>{isSaving ? 'Guardando...' : 'Guardar Platillo'}</Button>
                     </div>
                 </form>
             </Modal>
             
-            <Modal isOpen={isCategoryModalOpen} onClose={closeCategoryModal} title={currentCategory?.id ? 'Edit Category' : 'Add Category'}>
+            <Modal isOpen={isCategoryModalOpen} onClose={closeCategoryModal} title={currentCategory?.id ? 'Editar Categoría' : 'Añadir Categoría'}>
                 <form onSubmit={handleSaveCategory} className="space-y-4">
                     <Input 
-                        label="Category Name" 
+                        label="Nombre de Categoría" 
                         value={currentCategory?.name || ''} 
                         onChange={e => setCurrentCategory({...currentCategory, name: e.target.value})} 
                         required 
                         autoFocus
                     />
                     <div className="flex justify-end space-x-2 pt-4">
-                        <Button variant="ghost" type="button" onClick={closeCategoryModal} disabled={isSavingCategory}>Cancel</Button>
-                        <Button type="submit" disabled={isSavingCategory}>{isSavingCategory ? 'Saving...' : 'Save Category'}</Button>
+                        <Button variant="ghost" type="button" onClick={closeCategoryModal} disabled={isSavingCategory}>Cancelar</Button>
+                        <Button type="submit" disabled={isSavingCategory}>{isSavingCategory ? 'Guardando...' : 'Guardar Categoría'}</Button>
                     </div>
                 </form>
             </Modal>

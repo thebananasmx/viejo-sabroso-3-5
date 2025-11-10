@@ -46,7 +46,7 @@ const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
             onClick={onClose}
             className={`inline-flex rounded-md p-1 ${config.text} opacity-70 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500`}
           >
-            <span className="sr-only">Close</span>
+            <span className="sr-only">Cerrar</span>
             <XIcon className="h-5 w-5" />
           </button>
         </div>

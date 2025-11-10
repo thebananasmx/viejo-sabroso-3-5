@@ -47,17 +47,17 @@ const QRCodeGenerator: React.FC<QRCodeGeneratorProps> = ({ slug }) => {
       {qrCodeUrl ? (
         <>
             <img src={qrCodeUrl} alt={`QR Code for ${slug}`} className="w-64 h-64 border-4 border-gray-700 rounded-lg bg-white p-2"/>
-            <p className="mt-2 text-sm text-gray-400">Scan this to view your menu</p>
+            <p className="mt-2 text-sm text-gray-400">Escanea para ver tu menú</p>
             <a 
                 href={qrCodeUrl} 
                 download={`${slug}-qrcode.png`}
                 className="mt-4 text-brand-primary hover:opacity-80 font-medium"
             >
-                Download QR Code
+                Descargar Código QR
             </a>
         </>
       ) : (
-        <p className="text-red-500">Could not generate QR code.</p>
+        <p className="text-red-500">No se pudo generar el código QR.</p>
       )}
     </div>
   );
