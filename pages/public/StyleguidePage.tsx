@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
@@ -19,7 +20,7 @@ const StyleguidePage: React.FC = () => {
 
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <h1 className="font-serif text-5xl font-bold text-brand-light mb-8">Guía de Estilos</h1>
+            <h1 className="font-serif text-5xl font-bold text-brand-light mb-8">Style Guide</h1>
             
             {/* Colors Section */}
             <section className="mb-12">
@@ -85,6 +86,24 @@ const StyleguidePage: React.FC = () => {
                             <h4 className="font-bold text-xl text-brand-light">Título de la Tarjeta</h4>
                             <p className="text-gray-400 mt-2">Este es el contenido dentro de un componente de tarjeta. Es ideal para agrupar información relacionada.</p>
                         </Card>
+                    </div>
+
+                    {/* Product Card */}
+                    <div>
+                        <h3 className="text-2xl font-semibold text-brand-light mb-4">Tarjeta de Producto</h3>
+                        <div className="max-w-lg">
+                            <Card className="flex">
+                                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Hamburguesa Clásica" className="w-32 h-32 object-cover flex-shrink-0"/>
+                                <div className="p-4 flex flex-col flex-grow">
+                                    <h3 className="text-lg font-bold text-brand-light">Hamburguesa Clásica</h3>
+                                    <p className="text-gray-400 text-sm mt-1 flex-grow">Carne de res jugosa, lechuga fresca, tomate y queso cheddar en un pan brioche.</p>
+                                    <div className="flex justify-between items-center mt-4">
+                                        <p className="text-brand-primary font-bold text-lg">$14.99</p>
+                                        <Button size="sm">Añadir</Button>
+                                    </div>
+                                </div>
+                            </Card>
+                        </div>
                     </div>
 
                     {/* Inputs */}

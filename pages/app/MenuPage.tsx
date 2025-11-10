@@ -258,20 +258,22 @@ const MenuPage: React.FC = () => {
                     <h2 className="text-2xl font-semibold text-brand-light mb-4">{category.name}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {items.filter(item => item.categoryId === category.id).map(item => (
-                            <Card key={item.id} className="flex flex-col">
-                                <img src={item.imageUrl || 'https://via.placeholder.com/400x300'} alt={item.name} className="w-full h-48 object-cover"/>
-                                <div className="p-4 flex flex-col flex-grow">
-                                    <h3 className="text-lg font-bold text-brand-light">{item.name}</h3>
-                                    <p className="text-gray-400 text-sm mt-1 flex-grow">{item.description}</p>
-                                    <p className="text-brand-primary font-bold mt-2 text-lg">${item.price.toFixed(2)}</p>
-                                </div>
-                                <div className="p-4 bg-brand-dark flex justify-end space-x-2">
-                                    <Button variant="ghost" size="sm" onClick={() => openModal(item)}>
-                                        <EditIcon className="h-4 w-4"/>
-                                    </Button>
-                                    <Button variant="danger" size="sm" onClick={() => handleDelete(item.id)}>
-                                        <TrashIcon className="h-4 w-4"/>
-                                    </Button>
+                            <Card key={item.id} className="flex">
+                                <img src={item.imageUrl || 'https://via.placeholder.com/400x300'} alt={item.name} className="w-40 h-40 object-cover flex-shrink-0"/>
+                                <div className="flex flex-col flex-grow">
+                                    <div className="p-4 flex flex-col flex-grow">
+                                        <h3 className="text-lg font-bold text-brand-light">{item.name}</h3>
+                                        <p className="text-gray-400 text-sm mt-1 flex-grow">{item.description}</p>
+                                        <p className="text-brand-primary font-bold mt-2 text-lg">${item.price.toFixed(2)}</p>
+                                    </div>
+                                    <div className="p-4 bg-brand-dark flex justify-end space-x-2 border-t border-gray-800">
+                                        <Button variant="ghost" size="sm" onClick={() => openModal(item)}>
+                                            <EditIcon className="h-4 w-4"/>
+                                        </Button>
+                                        <Button variant="danger" size="sm" onClick={() => handleDelete(item.id)}>
+                                            <TrashIcon className="h-4 w-4"/>
+                                        </Button>
+                                    </div>
                                 </div>
                             </Card>
                         ))}
