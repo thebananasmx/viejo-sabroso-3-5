@@ -1,9 +1,11 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
-// FIX: Use Firebase v8 compatible imports
-import firebase from 'firebase/compat/app';
 import { User } from '../types';
 import { firebaseService } from '../services/firebaseService';
 import { auth } from '../firebaseConfig';
+
+// FIX: `firebase.User` type was not being resolved. Importing `firebase` types
+// from `firebase/compat/app` makes the type available for `onAuthStateChanged`.
+import type firebase from 'firebase/compat/app';
 
 interface AuthContextType {
   user: User | null;
@@ -21,7 +23,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // FIX: Use v8 onAuthStateChanged
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser: firebase.User | null) => {
       if (firebaseUser) {
         // User is signed in, see docs for a list of available properties

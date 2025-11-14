@@ -20,20 +20,13 @@ const ChangelogPage: React.FC = () => {
                   Correcciones
                 </span>
               </div>
-              <p className="text-gray-500 text-sm mb-6">27 de Julio de 2024</p>
-
+              <p className="text-gray-500 text-sm mb-6">26 de Julio de 2024</p>
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-2xl font-semibold text-brand-primary mb-3">🔄 Mejora Revertida</h3>
-                  <ul className="list-disc list-inside space-y-2 text-brand-light">
-                    <li><strong>IDs de Pedido Consecutivos:</strong> Se implementó un sistema para asignar números de pedido secuenciales (ej. #0001, #0002) para facilitar el seguimiento. Sin embargo, esta característica introdujo un error crítico que impedía realizar pedidos desde dispositivos móviles.</li>
-                    <li><strong>Reversión por Estabilidad:</strong> Después de múltiples intentos de corrección que no solucionaron el problema de raíz, se tomó la decisión de revertir por completo esta funcionalidad. El sistema vuelve a utilizar los IDs de documento únicos para garantizar la fiabilidad y el correcto funcionamiento de los pedidos en todas las plataformas.</li>
-                  </ul>
-                </div>
-                
-                 <div>
-                  <h3 className="text-2xl font-semibold text-brand-primary mb-3">🐛 Correcciones de Errores</h3>
-                   <p className="text-brand-light">Se revirtió la lógica de creación de pedidos a la versión estable anterior para solucionar el error que impedía a los usuarios de dispositivos móviles realizar pedidos.</p>
+                  <h3 className="text-2xl font-semibold text-brand-primary mb-3">🐛 Correcciones Críticas de Firebase</h3>
+                  <p className="text-brand-light">
+                    Se resolvió un ciclo persistente de errores de importación de Firebase (`SyntaxError: 'default' export not found` y `TypeError: Cannot read properties of undefined`). La solución definitiva implicó el uso del objeto global `window.firebase` para garantizar una inicialización estable y confiable de la librería, eliminando por completo los problemas de compatibilidad de módulos.
+                  </p>
                 </div>
               </div>
             </article>
